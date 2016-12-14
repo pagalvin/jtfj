@@ -1,10 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Angular QuickStart</title>
+    <title>Just the Facts, Jack!</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles.css">
+
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="Branding/app.css" type="text/css" />
+    <link href="Content/select.min.css" rel="stylesheet" />
+
+    <style>
+        .jtfj_banner {
+            background-color: black;
+        }
+
+        /* Wrapper for page content to push down footer */
+        .jtfjMainContent {
+            min-height: 100%;
+            height: auto !important;
+            height: 100%;
+            /* Negative indent footer by it's height */
+            margin: 0 auto -60px;
+        }
+
+        #push {
+            height: 60px;
+        }
+    </style>
 
     <!-- Polyfill(s) for older browsers -->
     <script src="node_modules/core-js/client/shim.min.js"></script>
@@ -20,6 +43,17 @@
   </head>
 
   <body>
-    <my-app>Loading AppComponent content here ...</my-app>
+
+        <div class="row jtfj_banner">
+        <div class="col-xs-12">
+            <a href="#/">
+                <img src="Branding/Images/Banner.jpg" class="img-responsive center-block" />
+            </a>
+        </div>
+    </div>
+
+
+   <!-- <my-app>Loading AppComponent content here ...</my-app> -->
+    <jtfj-knowledge-domains>Loading AppComponent content here ...</jtfj-knowledge-domains>
   </body>
 </html>
