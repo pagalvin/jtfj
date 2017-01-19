@@ -18,7 +18,7 @@ export class RecordIDsService extends AbstractAngularService {
 
     }
 
-    public Ping() {
+    public ping() {
         console.debug(`RecordIDsService: got a ping, pinging your right back.`);
     }
 

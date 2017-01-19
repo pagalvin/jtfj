@@ -21,7 +21,7 @@ export class UserService extends AbstractAngularService {
         this._loadCurrentUserPromise = this._loadCurrentUser();
     }
 
-    public Ping() {
+    public ping() {
         console.debug(`UserService: got a ping, pinging your right back.`);
     }
 

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'my-app',
-  template: `<h1>Hello {{name}}</h1>`,
+  selector: 'just-the-facts-jack',
+  templateUrl: `./app/JustTheFactsJack.html`,
 })
 export class AppComponent  { 
-  name = 'Paul';
+
 }

@@ -31,9 +31,24 @@ import * as Entities from "./AbstractItem";
         }
 
         static getEntityByUniqueID<T extends Entities.IAbstractItem>(forID: string, entityCollection: T[]): T {
-            return entityCollection.filter((anEntity) => {
+
+            if (! entityCollection) { 
+                throw ("Functionals: getEntityByUniqueID: Error: entityCollect is null or undefined.");
+            }
+
+            const foundEntities = entityCollection.filter((anEntity) => {
                 return anEntity.UniqueID === forID;
-            })[0];
+            });
+
+            if (foundEntities.length > 0) {
+                return foundEntities[0];
+            }
+
+            throw {
+                msg: `Functionals: getEntityByUniqueID: ERROR: Failed to retrieve an entity with ID [${forID}]`,
+                fullCollection: entityCollection
+            };
+
         }
 
         static filterOutEntityByUniqueID<T extends Entities.IAbstractItem>(forID: string, entityCollection: T[]): T[] {

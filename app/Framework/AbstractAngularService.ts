@@ -14,6 +14,6 @@ export abstract class AbstractAngularService {
 
     }
 
-    abstract Ping(): void;
+    abstract ping(): void;
 
 }
