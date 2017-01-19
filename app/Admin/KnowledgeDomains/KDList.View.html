@@ -1,10 +1,8 @@
 ﻿<div class="row">
     <div class="col-xs-12">
-        <h3>Knowledge Domains 
-            <button type="button" class="btn btn-primary pull-right"
-             onclick="window.location.href='#/Admin/KnowledgeDomains/New'">New Domain
-             </button>
-             </h3>
+        <h3>Knowledge Domains
+            <a [routerLink]="['/Admin/KnowledgeDomain', 'New']">New Domain</a>
+        </h3>
     </div>
 </div>
 
@@ -23,8 +21,7 @@
 
     </div>
 
-    <div class="row jtfj_listDataRow" ng-class="{'jtfj_listOddTableRow' : $index % 2 == 0}" 
-        *ngFor="let aKD of AllKnowledgeDomains">
+    <div class="row jtfj_listDataRow" ng-class="{'jtfj_listOddTableRow' : $index % 2 == 0}" *ngFor="let aKD of AllKnowledgeDomains">
 
         <div class="col-xs-4">
             {{aKD.Title}}
@@ -33,7 +30,7 @@
             {{aKD.Description}}
         </div>
         <div class="col-xs-1">
-            <a href="#/Admin/KnowledgeDomains/{{aKD.UniqueID}}"><span class="glyphicon glyphicon-edit"></span></a>
+            <a href="/Admin/KnowledgeDomain/{{aKD.UniqueID}}"><span class="glyphicon glyphicon-edit"></span></a>
         </div>
 
     </div>

@@ -1,6 +1,5 @@
 ﻿import {AbstractItem} from "../../Framework/AbstractItem";
 
-
     export class KnowledgeDomainItem extends AbstractItem {
 
         public Title: string;
