@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
+    <base href=".">
     <title>Just the Facts, Jack!</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +10,6 @@
 
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="Branding/app.css" type="text/css" />
-    <link href="Content/select.min.css" rel="stylesheet" />
 
     <style>
         .jtfj_banner {
@@ -20,7 +21,7 @@
             min-height: 100%;
             height: auto !important;
             height: 100%;
-            /* Negative indent footer by it's height */
+            /* Negative indent footer by its height */
             margin: 0 auto -60px;
         }
 
@@ -29,22 +30,24 @@
         }
     </style>
 
-    <!-- Polyfill(s) for older browsers -->
-    <script src="node_modules/core-js/client/shim.min.js"></script>
+<!-- Polyfill(s) for older browsers -->
+<script src="node_modules/core-js/client/shim.min.js"></script>
+<script src="node_modules/zone.js/dist/zone.js"></script>
+<script src="node_modules/reflect-metadata/Reflect.js"></script>
+<script src="node_modules/systemjs/dist/system.src.js"></script>
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="node_modules/moment/min/moment.min.js"></script>
+<script src="node_modules/underscore/underscore-min.js"></script>
 
-    <script src="node_modules/zone.js/dist/zone.js"></script>
-    <script src="node_modules/reflect-metadata/Reflect.js"></script>
-    <script src="node_modules/systemjs/dist/system.src.js"></script>
+<script src="systemjs.config.js"></script>
+<script>
+    System.import('app').catch(function (err) { console.error(err); });
+</script>
+</head>
 
-    <script src="systemjs.config.js"></script>
-    <script>
-      System.import('app').catch(function(err){ console.error(err); });
-    </script>
-  </head>
-
-  <body>
-
-        <div class="row jtfj_banner">
+<body>
+    <div class="row jtfj_banner">
         <div class="col-xs-12">
             <a href="#/">
                 <img src="Branding/Images/Banner.jpg" class="img-responsive center-block" />
@@ -52,8 +55,8 @@
         </div>
     </div>
 
+    <just-the-facts-jack>Loading Jack ...</just-the-facts-jack>
 
-   <!-- <my-app>Loading AppComponent content here ...</my-app> -->
-    <jtfj-knowledge-domains>Loading AppComponent content here ...</jtfj-knowledge-domains>
-  </body>
+</body>
+
 </html>
