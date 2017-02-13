@@ -14,7 +14,7 @@ export class KnowledgeDomainsService extends AbstractAngularService {
     private allKnowledgeDomains: KnowledgeDomainItem[];
     public get AllKnowledgeDomains() { return this.allKnowledgeDomains; }
 
-    private kdLoadPromise: Promise<boolean>;
+    private kdLoadPromise: Promise<KnowledgeDomainItem[]>;
 
     constructor(private _recordIDsService: RecordIDsService) {
 
@@ -32,15 +32,24 @@ export class KnowledgeDomainsService extends AbstractAngularService {
         return this.loadAllKnowledgeDomains();
     }
 
-    public getKnowledgeDomainItemByID(theId: string): Promise<KnowledgeDomainItem>{
+    public async getKnowledgeDomainItemByID(theId: string): Promise<KnowledgeDomainItem>{
 
         return new Promise<KnowledgeDomainItem>( (resolve, reject) => {
-        this.kdLoadPromise.then( 
-            (promiseResult) => {
-                console.debug(`KD.Service: Loaded all knowledge domains:`, this.allKnowledgeDomains);
-                const result = Functionals.getEntityByUniqueID<KnowledgeDomainItem>(theId, this.allKnowledgeDomains);
-                resolve(result);
-        })
+            this.kdLoadPromise.then( 
+                (promiseResult) => {
+                    console.debug(`KD.Service: Loaded all knowledge domains:`, this.allKnowledgeDomains);
+                    try {
+                        const result = Functionals.getEntityByUniqueID<KnowledgeDomainItem>(theId, this.allKnowledgeDomains);
+                        resolve(result);
+                    }
+                    catch (getException) {
+                        reject(getException);
+                    }
+            },
+            (errorDetails) => {
+                reject(errorDetails);
+            }
+        )
         });
 
     }
@@ -58,11 +67,13 @@ export class KnowledgeDomainsService extends AbstractAngularService {
 
         console.debug(`KnowledgeDomainService: Entering, will save a domain:`, { dmn: theDomain });
 
-        if (Functionals.IsIDAssigned(theDomain)) {
+        console.debug(`KnowledgeDomainService: is id assigned?:`, Functionals.IsIDAssigned(theDomain));
+
+        if (! Functionals.IsIDAssigned(theDomain)) {
 
             console.debug(`KnowledgeDomainService: SaveKnowledgeDomain: No ID assigned, getting one.`);
 
-            this._recordIDsService.GetUniqueID().then(
+            this._recordIDsService.getUniqueID().then(
                 (recordID: string) => {
                     theDomain.UniqueID = recordID;
                     console.debug(`KnowledgeDomainService: SaveKnowledgeDomain: Got an ID:`, theDomain.UniqueID);

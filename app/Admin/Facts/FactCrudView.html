@@ -1,0 +1,163 @@
+﻿<style>
+
+    .jtfj_itemMarkedForDeletion {
+        border: dashed 2px red;
+    }
+
+    .gly-rotate-180 {
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        transform: rotate(180deg);
+    }
+
+    .jtfj_actionIcon {
+        display: inline-block;
+        vertical-align: middle;
+        float: none;
+    }
+
+</style>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3 ng-show="vm.IsNewItem">New Fact</h3>
+            <h3 ng-show="! vm.IsNewItem">Edit an Existing Fact</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            To do:
+            <ul>
+                <li>Provide a method where we can say "go here for more info" and use amazon links</li>
+                <li>Explicit question types - true/false, multiple choice, fitb, sequencing</li>
+            </ul>
+        </div>
+    </div>
+    <form name="factForm">
+
+        <!-- Fact Statement -->
+        <div class="form-group">
+            <label for="factStatement">Fact Statement</label>
+            <input type="text" class="form-control" id="factStatement" ng-model="vm.InputFactStatement" />
+            <small id="factStatementHelp" class="form-text text-muted">This anchors the questions, correct and incorrect answers..</small>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="factDescription">Description</label>
+            <textarea class="form-control" id="factDescription" ng-model="vm.InputDescription"></textarea>
+            <small id="factStatementHelp" class="form-text text-muted">Enter the description of this fact. The description is for administrative purposes only.</small>
+        </div>
+
+        <!-- Knowledge Domains -->
+        <div class="form-group">
+            <label for="factKnowledgeDomains">Knowledge Domains</label>
+            <ui-select id="factKnowledgeDomains" multiple ng-model="vm.InputKnowledgeDomains" close-on-select="false" class="form-control" title="Choose a domain">
+                <ui-select-match placeholder="Select knowledge domains...">{{$item.Title}}</ui-select-match>
+                <ui-select-choices repeat="aKnowledgeDomain in vm.AllKnowledgeDomains | filter:$select.search">
+                    <b>{{aKnowledgeDomain.Title}}</b>
+                    <br/>
+                    <p>{{aKnowledgeDomain.Description}}</p>
+                    <hr/>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+        <!-- Questions -->
+        <div class="form-group form-horizontal">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>Questions&nbsp;<i ng-click="vm.HandleAddNewQuestion()" class="glyphicon glyphicon-plus-sign" title="Add a new Question"></i></label>
+                </div>
+            </div>
+            <div class="row jtfj_listTableHeaderRow">
+                <div class="col-xs-11">Title</div>
+                <div class="col-xs-1">Actions</div>
+            </div>
+            <div class="row jtfj_listDataRow" ng-class="{'jtfj_itemMarkedForDeletion': aQuestion._isDeleted}" ng-repeat="aQuestion in vm.AllQuestions">
+                <div class="col-xs-11">
+                    <input type="text" class="form-control" ng-disabled="! aQuestion._isEditing" ng-model="aQuestion.Question" />
+                </div>
+                <div class="col-xs-1 jtfj_actions">
+                    <i ng-show="! aQuestion._isEditing && ! aQuestion._isDeleted" ng-click="vm.HandleDeleteQuestion(aQuestion)" title="Mark this question for deletion." class="glyphicon glyphicon-trash jtfj_actionIcon"></i>
+                    <i ng-show="! aQuestion._isEditing && !aQuestion._isDeleted" ng-click="aQuestion._isEditing = true" title="Edit this question." class="glyphicon glyphicon-edit jtfj_actionIcon"></i>
+                    <i ng-show="aQuestion._isDeleted" ng-click="aQuestion._isDeleted = false" title="Unmark this question for deletion." class="glyphicon glyphicon-trash gly-rotate-180 jtfj_actionIcon" ></i>
+                    <i ng-show="aQuestion._isEditing" ng-click="aQuestion._isEditing = false" class="glyphicon glyphicon-save jtfj_actionIcon" title="Save your changes."></i>
+                </div>
+            </div>
+            <div class="row" ng-show="vm.AllQuestions.length==0">
+                <div class="form-text col-xs-12">This fact has no questions as yet.</div>
+            </div>
+        </div>
+
+        <!-- Correct Answers -->
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>Correct Answers&nbsp;<i ng-click="vm.HandleAddNewCorrectAnswer()" class="glyphicon glyphicon-plus-sign" title="Add a new Correct answer"></i></label>
+                </div>
+            </div>
+            <div class="row jtfj_listTableHeaderRow">
+                <div class="col-xs-11">Title</div>
+                <div class="col-xs-1">Actions</div>
+            </div>
+            <div class="row jtfj_listDataRow" ng-class="{'jtfj_itemMarkedForDeletion': aCorrectAnswer._isDeleted}" ng-repeat="aCorrectAnswer in vm.AllCorrectAnswers">
+                <div class="col-xs-11">
+                    <input type="text" class="form-control" ng-disabled="! aCorrectAnswer._isEditing" ng-model="aCorrectAnswer.CorrectAnswer" />
+                </div>
+                <div class="col-xs-1">
+                    <i ng-show="! aCorrectAnswer._isEditing && ! aCorrectAnswer._isDeleted" ng-click="vm.HandleDeleteCorrectAnswer(aCorrectAnswer)" title="Mark this Correct answer for deletion." class="glyphicon glyphicon-trash jtfj_actionIcon"></i>
+                    <i ng-show="! aCorrectAnswer._isEditing && !aCorrectAnswer._isDeleted" ng-click="aCorrectAnswer._isEditing = true" title="Edit this Correct answer." class="glyphicon glyphicon-edit jtfj_actionIcon"></i>
+                    <i ng-show="aCorrectAnswer._isDeleted" ng-click="aCorrectAnswer._isDeleted = false" title="Unmark this Correct answer for deletion." class="glyphicon glyphicon-trash gly-rotate-180 jtfj_actionIcon"></i>
+                    <i ng-show="aCorrectAnswer._isEditing" ng-click="aCorrectAnswer._isEditing = false" class="glyphicon glyphicon-save jtfj_actionIcon" title="Save your changes."></i>
+                </div>
+            </div>
+            <div class="row" ng-show="vm.AllCorrectAnswers.length==0">
+                <div class="form-text col-xs-12">This fact has no associated Correct answers as yet.</div>
+            </div>
+        </div>
+
+        <!-- Incorrect Answers -->
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>Wrong Answers&nbsp;<i ng-click="vm.HandleAddNewWrongAnswer()" class="glyphicon glyphicon-plus-sign" title="Add a new wrong answer"></i></label>
+                </div>
+            </div>
+            <div class="row jtfj_listTableHeaderRow">
+                <div class="col-xs-10">Title</div>
+                <div class="col-xs-1">Affinity</div>
+                <div class="col-xs-1">Actions</div>
+            </div>
+            <div class="row jtfj_listDataRow" ng-class="{'jtfj_itemMarkedForDeletion': aWrongAnswer._isDeleted}"  ng-repeat="aWrongAnswer in vm.AllWrongAnswers">
+                <div class="col-xs-10">
+                    <input type="text" class="form-control" ng-disabled="! aWrongAnswer._isEditing" ng-model="aWrongAnswer.WrongAnswer" />
+                </div>
+                <div class="col-xs-1" style="text-align: right;">
+                    <input type="number" class="form-control" ng-disabled="! aWrongAnswer._isEditing" ng-model="aWrongAnswer.TruthAffinity" />
+                </div>
+                <div class="col-xs-1">
+                    <i ng-show="! aWrongAnswer._isEditing && ! aWrongAnswer._isDeleted" ng-click="vm.HandleDeleteWrongAnswer(aWrongAnswer)" title="Mark this wrong answer for deletion." class="glyphicon glyphicon-trash jtfj_actionIcon"></i>
+                    <i ng-show="! aWrongAnswer._isEditing && !aWrongAnswer._isDeleted" ng-click="aWrongAnswer._isEditing = true" title="Edit this wrong answer." class="glyphicon glyphicon-edit jtfj_actionIcon"></i>
+                    <i ng-show="aWrongAnswer._isDeleted" ng-click="aWrongAnswer._isDeleted = false" title="Unmark this wrong answer for deletion." class="glyphicon glyphicon-trash gly-rotate-180 jtfj_actionIcon"></i>
+                    <i ng-show="aWrongAnswer._isEditing" ng-click="aWrongAnswer._isEditing = false" class="glyphicon glyphicon-save jtfj_actionIcon" title="Save your changes."></i>
+                </div>
+            </div>
+            <div class="row" ng-show="vm.AllWrongAnswers.length==0">
+                <div class="form-text col-xs-12">This fact has no associated wrong answers as yet.</div>
+            </div>
+        </div>
+
+    </form>
+
+<div class="row">
+    <div class="col-xs-12">
+        <button ng-disabled="! factForm.$dirty" type="button" class="btn btn-primary" ng-click="vm.HandleSave()">Save</button>
+        <button ng-show="! vm.IsNewItem" type="button" class="btn btn-warning" ng-click="vm.HandleDelete()">Delete</button>
+        <button type="button" class="btn btn-warning" ng-click="vm.HandleCancel(factForm.$dirty)">Cancel</button>
+    </div>
+</div>

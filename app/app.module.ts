@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 
+import {ConsoleLog} from './Framework/Logging/ConsoleLogService';
+
 import { RecordIDsService } from "./DataServices/RecordIDsService";
 import { UserService } from './Framework/Users/UserService';
 import { GlobalFooterComponent } from './Menus/GlobalFooter/GlobalFooter.Component';
@@ -34,6 +36,7 @@ const appRoutes: Routes = [
     AppComponent
   ],
   providers: [
+    ConsoleLog,
     KnowledgeDomainsService,
     RecordIDsService,
     UserService],

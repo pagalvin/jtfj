@@ -63,19 +63,19 @@ import * as Entities from "./AbstractItem";
 
         static IsIDAssigned<T extends Entities.IAbstractItem>(ItemToTest: T): boolean {
 
-            console.log(`Functions.ts: IsIDAssigsned: Testing an item:`, { itm: ItemToTest });
+            console.debug(`Functions.ts: IsIDAssigsned: Testing an item:`, { itm: ItemToTest });
 
             if (Functionals.IsNullOrUndefined(ItemToTest.UniqueID)) {
-                console.log(`Functions.ts: IsIDAssigsned: False.`);
+                console.debug(`Functions.ts: IsIDAssigsned: False.`);
                 return false;
             }
 
             if (ItemToTest.UniqueID.length > 0) {
-                console.log(`Functionalss.ts: IsIDAssigsned: True.`);
+                console.debug(`Functionalss.ts: IsIDAssigsned: True.`);
                 return true;
             }
 
-            console.log(`Functions.ts: IsIDAssigsned: False.`);
+            console.debug(`Functions.ts: IsIDAssigsned: False.`);
             return false;
 
         }

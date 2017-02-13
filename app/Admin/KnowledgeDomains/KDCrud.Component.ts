@@ -1,10 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { KnowledgeDomainItem } from './KDItem';
 import { KnowledgeDomainsService } from './KD.Service';
+
+import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 
 @Component({
     templateUrl: 'app/Admin/KnowledgeDomains/KDCrud.View.html',
@@ -26,22 +30,30 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
     public InputTitle: string;
     public InputDescription: string;
 
-    constructor(private route: ActivatedRoute,
-        private knowledgeDomainService: KnowledgeDomainsService) {
+    constructor(private activatedRoute: ActivatedRoute,
+        private router: Router,
+        private knowledgeDomainService: KnowledgeDomainsService,
+        private clog: ConsoleLog) {
 
-        console.debug(`KnowledgeDomainsCrudComponent: ctor: Entering.`);
+        clog.debug(`KnowledgeDomainsCrudComponent: ctor: Entering.`);
 
     } // constructor
 
-    public ngOnInit() {
+    async xyzzy() {
+        const result = await this.knowledgeDomainService.getKnowledgeDomainItemByID("paulA");
 
-        console.debug(`KDCrud.Component: ngOnInit: Entering.`);
+
+    }
+
+    public oldngOnInit() {
+
+        this.clog.debug(`KDCrud.Component: ngOnInit: Entering.`);
 
         try {
 
-            this.paramSubscription = this.route.params.subscribe(params => {
+            this.paramSubscription = this.activatedRoute.params.subscribe(params => {
 
-                console.debug(`KDCrud.Component: ngOnInit: got some params, domainID: [${params["domainID"]}].`);
+                this.clog.debug(`KDCrud.Component: ngOnInit: got some params, domainID: [${params["domainID"]}].`);
 
                 this.providedKnowledgeDomainID = params["domainID"];
 
@@ -49,21 +61,75 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
 
                 if (!this.isNewKnowledgeDomainItem) {
 
-                    console.debug(`KnowledgeDomainsCrudComponent: will need to load up an existing item to edit it.`);
-                    
+                    this.clog.debug(`KnowledgeDomainsCrudComponent: will need to load up an existing item to edit it.`);
+
+
+
                     this.knowledgeDomainService.getKnowledgeDomainItemByID(this.providedKnowledgeDomainID).then(
                         (existingKnowledgeDomain) => {
-                            console.debug(`KDCrud.Component: ngOnInit: Got an existing knowledge domain:`, existingKnowledgeDomain);
+                            this.clog.debug(`KDCrud.Component: ngOnInit: Got an existing knowledge domain:`, existingKnowledgeDomain);
                             this.InputDescription = existingKnowledgeDomain.Description;
                             this.InputTitle = existingKnowledgeDomain.Title;
-                        });
+                        },
+                        (errorDetails) => {
+                            this.clog.error(`KDCrud.Component: ngOnInit: Error: Was told to retrieve ` +
+                                `a knowledge domain but got an error instead:`, errorDetails);
+                            this.InputDescription = JSON.stringify(errorDetails);
+                            this.InputTitle = "ERROR";
+                        }
+                    );
+
+
                 }
             });
         }
         catch (initializationException) {
-            console.error(`KDCrud.Component: Error: Failed to initialize due to exception:`, initializationException);
+            this.clog.error(`KDCrud.Component: Error: Failed to initialize due to exception:`, initializationException);
         }
 
+    }
+
+    public ngOnInit() {
+
+        this.clog.debug(`KDCrud.Component: ngOnInit: Entering.`);
+
+        try {
+            this.paramSubscription = this.activatedRoute.params.subscribe(params => {
+                this.initializeWorkingKnowledgeDomain(params);
+            });
+        }
+        catch (initializationException) {
+            this.clog.error(`KDCrud.Component: Error: Failed to initialize due to exception:`, initializationException);
+        }
+
+    }
+
+    private async initializeWorkingKnowledgeDomain(params: any) {
+
+        this.clog.debug(`KDCrud.Component: ngOnInit: got some params, domainID: [${params["domainID"]}].`);
+        this.providedKnowledgeDomainID = params["domainID"];
+
+        this.isNewKnowledgeDomainItem = this.providedKnowledgeDomainID.toLowerCase() === "new" ? true : false;
+
+        if (!this.isNewKnowledgeDomainItem) {
+
+            this.clog.debug(`KnowledgeDomainsCrudComponent: will need to load up an existing item to edit it.`);
+
+            try {
+                const existingKnowledgeDomain = 
+                    await this.knowledgeDomainService.getKnowledgeDomainItemByID(this.providedKnowledgeDomainID);
+                this.clog.debug(`KDCrud.Component: ngOnInit: Got an existing knowledge domain:`, existingKnowledgeDomain);
+                this.InputDescription = existingKnowledgeDomain.Description;
+                this.InputTitle = existingKnowledgeDomain.Title;
+            }
+            catch (errorDetails) {
+                this.clog.error(`KDCrud.Component: ngOnInit: Error: Was told to retrieve ` +
+                    `a knowledge domain but got an error instead:`, errorDetails);
+                this.InputDescription = JSON.stringify(errorDetails);
+                this.InputTitle = "ERROR";
+
+            }
+        }
     }
 
     public ngOnDestroy() {
@@ -75,6 +141,10 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
     }
 
     private returnToKnowledgeDomainsList() {
+        this.clog.debug("KDCrud.Component: returnToKnowledgeDomainsList: Entering.");
+        //this.router.navigateByUrl("/Admin/KnowledgeDomains");
+        this.router.navigate(["/Admin/KnowledgeDomains"]);
+
         //this.$location.path("/Admin/KnowledgeDomains");
     }
 
@@ -90,9 +160,12 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
             knowledgeDomainToSave.UniqueID = this.providedKnowledgeDomainID;
         }
 
-        console.debug(`KDCrud.Component: handleSave: Saving a knowledge domain:`, [].concat(knowledgeDomainToSave)[0]);
+        this.clog.debug(`KDCrud.Component: handleSave: Saving a knowledge domain (v2):`, [].concat(knowledgeDomainToSave)[0]);
         this.knowledgeDomainService.saveKnowledgeDomain(knowledgeDomainToSave);
 
+        this.clog.debug(`KDCrud.Component: handleSave: changing route.`);
+
+        this.returnToKnowledgeDomainsList();
         // const OKModal = this._modalService.CreateOKModal("Saved Knowledge Domain", confirmationMsg).result.then(
         //     (result) => {
         //         this._returnToKnowledgeDomainsList();
@@ -102,6 +175,8 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
     }
 
     public handleDelete() {
+
+        this.clog.debug(`KDCrud.Component: handleDelete: Entering.`);
 
         // const confirmModal = this._modalService.CreateConfirmModal("Confirm Delete", "Are you sure you want to delete this item?");
 

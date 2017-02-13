@@ -1,6 +1,7 @@
 ﻿import { AbstractAngularService } from "../../Framework/AbstractAngularService";
 import { Injectable } from "@angular/core";
 import { User } from "./UserEntity";
+import { ConsoleLog } from "../../Framework/Logging/ConsoleLogService";
 
 "use strict";
 
@@ -9,34 +10,34 @@ export class UserService extends AbstractAngularService {
 
     private _localStorageKey: string = "AllUser";
 
-    private _currentUser: User;
-    public get CurrentUser() { return this._currentUser; }
+    private currentUser: User;
+    public get CurrentUser() { return this.currentUser; }
 
-    private _loadCurrentUserPromise: Promise<boolean>;
+    private loadCurrentUserPromise: Promise<boolean>;
 
-    constructor() {
+    constructor(private clog: ConsoleLog) {
 
         super();
 
-        this._loadCurrentUserPromise = this._loadCurrentUser();
+        this.loadCurrentUserPromise = this.loadCurrentUser();
     }
 
     public ping() {
-        console.debug(`UserService: got a ping, pinging your right back.`);
+        this.clog.debug(`UserService: got a ping, pinging your right back.`);
     }
 
-    public EnsureCurrentUser() {
-        return this._loadCurrentUserPromise;
+    public ensureCurrentUser() {
+        return this.loadCurrentUserPromise;
     }
 
-    public _loadCurrentUser(): Promise<boolean> {
+    public loadCurrentUser(): Promise<boolean> {
 
         return new Promise<boolean>((resolve, reject) => {
-            this._currentUser = new User();
-            this._currentUser.Name = "Paul Galvin";
-            this._currentUser.UserID = "Paul";
+            this.currentUser = new User();
+            this.currentUser.Name = "Paul Galvin";
+            this.currentUser.UserID = "Paul";
 
-            console.log(`UserService: Resolving after assigning hard coded user:`, this.CurrentUser);
+            this.clog.debug(`UserService: Resolving after assigning hard coded user:`, this.CurrentUser);
             resolve(true);
         });
         
