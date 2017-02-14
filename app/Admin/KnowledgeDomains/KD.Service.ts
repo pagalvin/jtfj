@@ -3,7 +3,7 @@ import { Functionals } from '../../Framework/Functionals';
 import { AbstractAngularService } from "../../Framework/AbstractAngularService";
 import { RecordIDsService } from "../../DataServices/RecordIDsService";
 import { KnowledgeDomainItem } from "./KDItem";
-
+import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 import { Injectable } from '@angular/core';
 
 "use strict";

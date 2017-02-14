@@ -1,4 +1,4 @@
-﻿module jtfj.Entities {
+﻿import {AbstractItem, IAbstractItem} from "../../Framework/AbstractItem";
 
     export interface IWrongAnswer {
         WrongAnswer: string;
@@ -19,7 +19,7 @@
         _isDeleted: boolean; // Used by the UI as well.
     }
 
-    export interface IFactItem extends jtfj.Framework.Entities.IAbstractItem {
+    export interface IFactItem extends IAbstractItem {
         FactID: number;
         FactStatement: string;
         Description: string;
@@ -29,7 +29,7 @@
         WrongAnswers: IWrongAnswer[];
     }
 
-    export class FactItem extends jtfj.Framework.Entities.AbstractItem implements IFactItem {
+    export class FactItem extends AbstractItem implements IFactItem {
 
         public FactID: number;
         public FactStatement: string;
@@ -69,24 +69,22 @@
 
         }
 
-        static CreateRandomFact(): FactItem {
+        // static CreateRandomFact(): FactItem {
 
-            const result = new FactItem();
+        //     const result = new FactItem();
 
-            result.Description = chance.sentence();
-            result.FactStatement = chance.sentence();
-            result.KnowledgeDomains = ["Presidents"];
-            result.WrongAnswers = _.range(chance.integer({ min: 1, max: 5 })).map(() => {
-                return <IWrongAnswer>{
-                    WrongAnswer: "false: " + chance.sentence(), TruthAffinity: chance.integer({ min: 0, max: 99 })
-                }
-            });
+        //     result.Description = chance.sentence();
+        //     result.FactStatement = chance.sentence();
+        //     result.KnowledgeDomains = ["Presidents"];
+        //     result.WrongAnswers = _.range(chance.integer({ min: 1, max: 5 })).map(() => {
+        //         return <IWrongAnswer>{
+        //             WrongAnswer: "false: " + chance.sentence(), TruthAffinity: chance.integer({ min: 0, max: 99 })
+        //         }
+        //     });
 
-            return result;
+        //     return result;
 
-        }
+        // }
     
 
     }
-
-}
