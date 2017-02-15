@@ -53,7 +53,7 @@
 
         }
 
-        static MakeSafe(factItem: FactItem): FactItem {
+        static cleanNulls(factItem: FactItem): FactItem {
 
             const result = new FactItem();
             result.CorrectAnswers = factItem.CorrectAnswers || [];
