@@ -15,12 +15,16 @@ import { KnowledgeDomainsListComponent } from './Admin/KnowledgeDomains/KDList.C
 import { KnowledgeDomainsCrudComponent } from './Admin/KnowledgeDomains/KDCrud.Component';
 import { KnowledgeDomainsService } from './Admin/KnowledgeDomains/KD.Service';
 
+import { FactCrudComponent } from './Admin/Facts/FactCrud.Component';
+import { FactsListComponent } from './Admin/Facts/FactList.Component';
+import { FactsService } from './Admin/Facts/Facts.Service';
+import { ErrorsService } from './Framework/ErrorHandling/ErrorsService';
 
 const appRoutes: Routes = [
-  //{ path: '', component: GlobalNavComponent},
   { path: 'Admin/KnowledgeDomain/:domainID', component: KnowledgeDomainsCrudComponent},
-  { path: 'Admin/KnowledgeDomains', component: KnowledgeDomainsListComponent}
- // { path: '**', component: KnowledgeDomainsListComponent }
+  { path: 'Admin/KnowledgeDomains', component: KnowledgeDomainsListComponent},
+  { path: 'Admin/Facts', component: FactsListComponent},
+  { path: 'Admin/Fact/:factID', component: FactCrudComponent}
 ];
 
 @NgModule({
@@ -30,6 +34,8 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes)
   ],
   declarations: [
+    FactsListComponent,
+    FactCrudComponent,
     KnowledgeDomainsListComponent,
     KnowledgeDomainsCrudComponent,
     GlobalFooterComponent,
@@ -37,6 +43,8 @@ const appRoutes: Routes = [
   ],
   providers: [
     ConsoleLog,
+    ErrorsService,
+    FactsService,
     KnowledgeDomainsService,
     RecordIDsService,
     UserService],
