@@ -61,7 +61,7 @@ import * as Entities from "./AbstractItem";
             return value ? false : true;
         }
 
-        static IsIDAssigned<T extends Entities.IAbstractItem>(ItemToTest: T): boolean {
+        static isIDAssigned<T extends Entities.IAbstractItem>(ItemToTest: T): boolean {
 
             console.debug(`Functions.ts: IsIDAssigsned: Testing an item:`, { itm: ItemToTest });
 
