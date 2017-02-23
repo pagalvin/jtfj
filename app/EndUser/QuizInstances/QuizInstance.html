@@ -1,0 +1,28 @@
+﻿<h3>Take a Quiz! (quiz instance html)</h3>
+
+<a href="javascript:void(0);" ng-click="vm.Ping()">Ping the service</a>
+
+<div class="row">
+    <div class="col-xs-3">
+        <a ng-href="javascript:void(0)" ng-click="vm.HandlePreviousQuestion()">Previous Question</a>
+    </div>
+    <div class="col-xs-6">
+        <h4>Question {{vm.CurrentQuizQuestionIndex + 1}} of {{vm.AllQuizQuestions.length}}: "{{vm.CurrentQuizQuestion.Question}}"</h4>
+
+        <div class="row">
+            <div class="col-xs-12">
+                Select the best answer:
+            </div>
+            <div class="col-xs-12">
+                <div class="radio" ng-repeat="aPossibleResponse in vm.CurrentQuizQuestion.AllChoices">
+                    <label><input type="radio" name="optradio" ng-model="aPossibleResponse.WasSelectedByUser"/>{{aPossibleResponse.Response}}</label>
+                </div>
+            </div>
+        </div>
+
+        <pre>{{vm.CurrentQuizQuestion | json}}</pre>
+    </div>
+    <div class="col-xs-3">
+        <a ng-href="javascript:void(0)" ng-click="vm.HandleNextQuestion()">Next Question</a>
+    </div>
+</div>
