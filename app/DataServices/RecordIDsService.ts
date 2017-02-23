@@ -23,30 +23,28 @@ export class RecordIDsService extends AbstractAngularService {
         this.clog.debug(`RecordIDsService: got a ping, pinging your right back.`);
     }
 
-    public getUniqueID(): Promise<string> {
+    public async getUniqueID(): Promise<string> {
 
         this.clog.debug(`RecordsIDService: GetUniqueID: Entering.`);
 
+        await this.userService.ensureCurrentUser();
+
         return new Promise<string>((resolve, reject) => {
-            
-            this.userService.ensureCurrentUser().then(
-                () => {
 
-                    this.clog.debug(`RecordsIDService: GetUniqueID: Got the current user, determining next ID.`);
+            this.clog.debug(`RecordsIDService: GetUniqueID: Got the current user, determining next ID.`);
 
-                    const thisStorageKey = this.localStorageKeySeed + this.userService.CurrentUser.UserID;
+            const thisStorageKey = this.localStorageKeySeed + this.userService.CurrentUser.UserID;
 
-                    const nextNumericPortion: number = parseInt(localStorage.getItem(thisStorageKey));
-                    const saveKey: number = nextNumericPortion ? nextNumericPortion + 1 : 1;
-                    const returnKey = this.userService.CurrentUser.UserID + "_" + saveKey.toString();
+            const nextNumericPortion: number = parseInt(localStorage.getItem(thisStorageKey));
+            const saveKey: number = nextNumericPortion ? nextNumericPortion + 1 : 1;
+            const returnKey = this.userService.CurrentUser.UserID + "_" + saveKey.toString();
 
-                    localStorage.setItem(thisStorageKey, saveKey.toString());
+            localStorage.setItem(thisStorageKey, saveKey.toString());
 
-                    resolve(returnKey);
-
-                });
+            resolve(returnKey);
 
         });
+
     }
 }
 
