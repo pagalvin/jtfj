@@ -5,18 +5,20 @@ import { RecordIDsService } from "../../DataServices/RecordIDsService";
 import { KnowledgeDomainItem } from "./KDItem";
 import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 import { Injectable } from '@angular/core';
+import { Util } from '../../Framework/Util/Util';
 
 "use strict";
 
 @Injectable()
 export class KnowledgeDomainsService extends AbstractAngularService {
 
-    private allKnowledgeDomains: KnowledgeDomainItem[];
-    public get AllKnowledgeDomains() { return this.allKnowledgeDomains; }
+    private _allKnowledgeDomains: KnowledgeDomainItem[];
+    public get AllKnowledgeDomains() { return this._allKnowledgeDomains; }
 
     private kdLoadPromise: Promise<KnowledgeDomainItem[]>;
 
-    constructor(private _recordIDsService: RecordIDsService) {
+    constructor(private _recordIDsService: RecordIDsService,
+        private clog: ConsoleLog) {
 
         super();
         this.kdLoadPromise = this.loadAllKnowledgeDomains();
@@ -37,9 +39,9 @@ export class KnowledgeDomainsService extends AbstractAngularService {
         return new Promise<KnowledgeDomainItem>( (resolve, reject) => {
             this.kdLoadPromise.then( 
                 (promiseResult) => {
-                    console.debug(`KD.Service: Loaded all knowledge domains:`, this.allKnowledgeDomains);
+                    console.debug(`KD.Service: Loaded all knowledge domains:`, this._allKnowledgeDomains);
                     try {
-                        const result = Functionals.getEntityByUniqueID<KnowledgeDomainItem>(theId, this.allKnowledgeDomains);
+                        const result = Functionals.getEntityByUniqueID<KnowledgeDomainItem>(theId, this._allKnowledgeDomains);
                         resolve(result);
                     }
                     catch (getException) {
@@ -54,58 +56,61 @@ export class KnowledgeDomainsService extends AbstractAngularService {
 
     }
 
-    private _persistKnowledgeDomains() {
-        localStorage.setItem("knowledgedomains", JSON.stringify(this.allKnowledgeDomains));
+    private async persistKnowledgeDomains(): Promise<boolean> {
+
+        return new Promise<boolean>( (resolve, reject) => {
+            this.clog.debug(`KD.Service: _persistKnowledgeDomains: About to save to local storage, waiting 4 secs first.`);
+            this.clog.debug(`KD.Service: _persistKnowledgeDomains: Saving to local storage, data:`, this._allKnowledgeDomains);
+        
+            localStorage.setItem("knowledgedomains", JSON.stringify(this._allKnowledgeDomains));
+            resolve(true);
+        });
+    
     }
 
-    public DeleteKnowledgeDomainByID(theDomainID: string) {
-        this.allKnowledgeDomains = Functionals.filterOutEntityByUniqueID(theDomainID, this.allKnowledgeDomains);
-        this._persistKnowledgeDomains();
+    public async deleteKnowledgeDomainByID(theDomainID: string) {
+        this._allKnowledgeDomains = Functionals.filterOutEntityByUniqueID(theDomainID, this._allKnowledgeDomains);
+        await this.persistKnowledgeDomains();
+
     }
 
-    public saveKnowledgeDomain(theDomain: KnowledgeDomainItem) {
+    public async saveKnowledgeDomain(theDomain: KnowledgeDomainItem) {
 
-        console.debug(`KnowledgeDomainService: Entering, will save a domain:`, { dmn: theDomain });
+        this.clog.debug(`KnowledgeDomainService: Entering, will save a domain:`, { dmn: theDomain });
+        this.clog.debug(`KnowledgeDomainService: is id assigned?:`, Functionals.isIDAssigned(theDomain));
 
-        console.debug(`KnowledgeDomainService: is id assigned?:`, Functionals.IsIDAssigned(theDomain));
+        if (! Functionals.isIDAssigned(theDomain)) {
 
-        if (! Functionals.IsIDAssigned(theDomain)) {
+            this.clog.debug(`KnowledgeDomainService: SaveKnowledgeDomain: No ID assigned, getting one.`);
 
-            console.debug(`KnowledgeDomainService: SaveKnowledgeDomain: No ID assigned, getting one.`);
+            theDomain.UniqueID = await this._recordIDsService.getUniqueID();
 
-            this._recordIDsService.getUniqueID().then(
-                (recordID: string) => {
-                    theDomain.UniqueID = recordID;
-                    console.debug(`KnowledgeDomainService: SaveKnowledgeDomain: Got an ID:`, theDomain.UniqueID);
-                    this.allKnowledgeDomains = Functionals.getMergedCollection(this.allKnowledgeDomains, theDomain);
-                    this._persistKnowledgeDomains();
-                }
-            );
+            this.clog.debug(`KnowledgeDomainService: SaveKnowledgeDomain: Got an ID:`, theDomain.UniqueID);
+
+            this._allKnowledgeDomains = Functionals.getMergedCollection(this._allKnowledgeDomains, theDomain);
+            
+            await this.persistKnowledgeDomains();
+            
         }
         else {
-            console.debug(`KnowledgeDomainService: SaveKnowledgeDomain: Already has an ID, no need to get a new one.`);
-            this.allKnowledgeDomains = Functionals.getMergedCollection(this.allKnowledgeDomains, theDomain);
-            this._persistKnowledgeDomains();
+            this.clog.debug(`KnowledgeDomainService: SaveKnowledgeDomain: Already has an ID, no need to get a new one.`);
+            this._allKnowledgeDomains = Functionals.getMergedCollection(this._allKnowledgeDomains, theDomain);
+            await this.persistKnowledgeDomains();
         }
 
     }
 
     private loadAllKnowledgeDomains(): Promise<KnowledgeDomainItem[]> {
 
-        return new Promise<KnowledgeDomainItem[]>((resolve, reject) => {
-            this.allKnowledgeDomains = JSON.parse(localStorage.getItem("knowledgedomains"));
+        return new Promise<KnowledgeDomainItem[]> ((resolve, reject) => {
+            
+            this._allKnowledgeDomains = JSON.parse(localStorage.getItem("knowledgedomains"));
 
-            this.allKnowledgeDomains = this.allKnowledgeDomains || [];
+            this._allKnowledgeDomains = this._allKnowledgeDomains || [];
 
-            const randomKD: KnowledgeDomainItem = new KnowledgeDomainItem();
-            randomKD.Description = "my random description";
-            randomKD.Title = "my random title";
-            randomKD.UniqueID = "my unique id";
-            this.allKnowledgeDomains = [].concat(randomKD);
+            this.clog.debug(`KnowledgeDomainService: loadAllKnowledgeDomains: Resolving with domains:`, this._allKnowledgeDomains);
 
-            console.debug(`KnowledgeDomainService: Resolving with domains:`, this.allKnowledgeDomains);
-
-            resolve(this.allKnowledgeDomains);
+            resolve(this._allKnowledgeDomains);
 
         });
 

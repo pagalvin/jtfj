@@ -39,12 +39,6 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
 
     } // constructor
 
-    async xyzzy() {
-        const result = await this.knowledgeDomainService.getKnowledgeDomainItemByID("paulA");
-
-
-    }
-
     public oldngOnInit() {
 
         this.clog.debug(`KDCrud.Component: ngOnInit: Entering.`);
@@ -148,7 +142,7 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
         //this.$location.path("/Admin/KnowledgeDomains");
     }
 
-    public handleSave() {
+    public async handleSave() {
 
         const knowledgeDomainToSave = new KnowledgeDomainItem();
         const confirmationMsg: string = this.isNewKnowledgeDomainItem ? "Saved a new Knowledge Domain!" : "Updated an existing Knowledge Domain!";
@@ -161,7 +155,9 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
         }
 
         this.clog.debug(`KDCrud.Component: handleSave: Saving a knowledge domain (v2):`, [].concat(knowledgeDomainToSave)[0]);
-        this.knowledgeDomainService.saveKnowledgeDomain(knowledgeDomainToSave);
+        await this.knowledgeDomainService.saveKnowledgeDomain(knowledgeDomainToSave);
+
+        this.clog.debug(`KDCrud.Component: handleSave: Finished saving the knowledge domain.`);
 
         this.clog.debug(`KDCrud.Component: handleSave: changing route.`);
 
@@ -174,10 +170,14 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
 
     }
 
-    public handleDelete() {
+    public async handleDelete() {
 
         this.clog.debug(`KDCrud.Component: handleDelete: Entering.`);
 
+        await this.knowledgeDomainService.deleteKnowledgeDomainByID(this.providedKnowledgeDomainID);
+
+        this.returnToKnowledgeDomainsList();
+        
         // const confirmModal = this._modalService.CreateConfirmModal("Confirm Delete", "Are you sure you want to delete this item?");
 
         // confirmModal.result.then(
