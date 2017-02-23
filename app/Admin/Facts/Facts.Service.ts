@@ -24,7 +24,7 @@ export class FactsService extends AbstractAngularService {
 
         super();
 
-        this._loadAllFactsPromise = this.loadAllFacts();
+        this._loadAllFactsPromise = this.loadAllFactsAsync();
 
     }
 
@@ -34,11 +34,11 @@ export class FactsService extends AbstractAngularService {
     }
 
 
-    public LoadAllFacts() {
+    public loadAllFacts() {
         return this._loadAllFactsPromise;
     }
 
-    public async DeleteFactByUniqueID(forID: string): Promise<boolean> {
+    public async deleteFactByUniqueID(forID: string): Promise<boolean> {
 
         return new Promise<boolean>((resolve, reject) => {
 
@@ -71,11 +71,11 @@ export class FactsService extends AbstractAngularService {
 
     // }
 
-    public async GetFactByUniqueID(forID: string): Promise<IFactItem> {
+    public async getFactByUniqueID(forID: string): Promise<FactItem> {
 
         this.cLog.debug(`FactsService: GetFactByID: loading a fact, [${forID}].`);
 
-        return new Promise<IFactItem>(async (resolve, reject) => {
+        return new Promise<FactItem>(async (resolve, reject) => {
             try {
                 await this._loadAllFactsPromise;
                 resolve(Functionals.getEntityByUniqueID(forID, this._allFacts));
@@ -120,14 +120,14 @@ export class FactsService extends AbstractAngularService {
 
     // }
 
-    public async SaveFact(theFact: IFactItem): Promise<boolean> {
+    public async saveFact(theFact: IFactItem): Promise<boolean> {
 
         this.cLog.debug(`FactsService: SaveFact: Entering. before saving, all facts and fact to save:`, {
             presave: this._allFacts, factToSave: theFact
         });
 
         return new Promise<boolean>(async (resolve, reject) => {
-            if (!Functionals.isIDAssigned(theFact)) {
+            if (! Functionals.isIDAssigned(theFact)) {
 
                 const newID = await this.recordsService.getUniqueID();
 
@@ -160,7 +160,7 @@ export class FactsService extends AbstractAngularService {
 
     }
 
-    private async loadAllFacts(): Promise<boolean> {
+    private async loadAllFactsAsync(): Promise<boolean> {
 
         return new Promise<boolean>((resolve, reject) => {
 
@@ -181,7 +181,10 @@ export class FactsService extends AbstractAngularService {
                 resolve(true);
 
             }
-        })
+            catch (errorDetails) {
+                reject(false);
+            }
+        });
     }
 
     public Create20RandomFacts() {

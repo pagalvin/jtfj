@@ -21,7 +21,9 @@
 
 </style>
 
-    <div class="row">
+<h1>Fact Crud View</h1>
+
+    <!--<div class="row">
         <div class="col-xs-12">
             <h3 ng-show="vm.IsNewItem">New Fact</h3>
             <h3 ng-show="! vm.IsNewItem">Edit an Existing Fact</h3>
@@ -39,21 +41,18 @@
     </div>
     <form name="factForm">
 
-        <!-- Fact Statement -->
         <div class="form-group">
             <label for="factStatement">Fact Statement</label>
             <input type="text" class="form-control" id="factStatement" ng-model="vm.InputFactStatement" />
             <small id="factStatementHelp" class="form-text text-muted">This anchors the questions, correct and incorrect answers..</small>
         </div>
 
-        <!-- Description -->
         <div class="form-group">
             <label for="factDescription">Description</label>
             <textarea class="form-control" id="factDescription" ng-model="vm.InputDescription"></textarea>
             <small id="factStatementHelp" class="form-text text-muted">Enter the description of this fact. The description is for administrative purposes only.</small>
         </div>
 
-        <!-- Knowledge Domains -->
         <div class="form-group">
             <label for="factKnowledgeDomains">Knowledge Domains</label>
             <ui-select id="factKnowledgeDomains" multiple ng-model="vm.InputKnowledgeDomains" close-on-select="false" class="form-control" title="Choose a domain">
@@ -67,7 +66,6 @@
             </ui-select>
         </div>
 
-        <!-- Questions -->
         <div class="form-group form-horizontal">
             <div class="row">
                 <div class="col-xs-12">
@@ -94,7 +92,6 @@
             </div>
         </div>
 
-        <!-- Correct Answers -->
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-12">
@@ -121,7 +118,6 @@
             </div>
         </div>
 
-        <!-- Incorrect Answers -->
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-12">
@@ -160,4 +156,4 @@
         <button ng-show="! vm.IsNewItem" type="button" class="btn btn-warning" ng-click="vm.HandleDelete()">Delete</button>
         <button type="button" class="btn btn-warning" ng-click="vm.HandleCancel(factForm.$dirty)">Cancel</button>
     </div>
-</div>
+</div>-->
