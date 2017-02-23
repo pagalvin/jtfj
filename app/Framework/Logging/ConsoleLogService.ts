@@ -20,15 +20,16 @@ export class ConsoleLog implements LogInterface {
 
     public error(msg: string, ...supportingDetails: any[]): void {
         this.emitLogMessage("error", msg, supportingDetails);
+        throw {msg: msg, supportingDetails: supportingDetails};
     }
 
     private emitLogMessage(msgType: "debug" | "info" | "warn" | "error", msg: string, supportingDetails: any[]) {
-     
+
         if (supportingDetails.length > 0) {
-            console[msgType](msg, supportingDetails);
+            console[msgType].call(this, msg, supportingDetails);
         }
         else {
-            console[msgType](msg);
+            console[msgType].call(this, msg);
         }
 
     }
