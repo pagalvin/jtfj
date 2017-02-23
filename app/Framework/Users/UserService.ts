@@ -2,6 +2,7 @@
 import { Injectable } from "@angular/core";
 import { User } from "./UserEntity";
 import { ConsoleLog } from "../../Framework/Logging/ConsoleLogService";
+import { Util } from "../../Framework/Util/Util";
 
 "use strict";
 
@@ -26,13 +27,16 @@ export class UserService extends AbstractAngularService {
         this.clog.debug(`UserService: got a ping, pinging your right back.`);
     }
 
-    public ensureCurrentUser() {
+    public async ensureCurrentUser(): Promise<boolean> {
         return this.loadCurrentUserPromise;
     }
 
-    public loadCurrentUser(): Promise<boolean> {
+    public async loadCurrentUser(): Promise<boolean> {
 
-        return new Promise<boolean>((resolve, reject) => {
+        return new Promise<boolean>(async (resolve, reject) => {
+
+            await Util.WaitForMs(2500);
+            
             this.currentUser = new User();
             this.currentUser.Name = "Paul Galvin";
             this.currentUser.UserID = "Paul";
