@@ -1,4 +1,3 @@
-"use strict"
 
 import { LogInterface } from './LogInterface';
 import { Injectable} from '@angular/core';
@@ -25,11 +24,20 @@ export class ConsoleLog implements LogInterface {
 
     private emitLogMessage(msgType: "debug" | "info" | "warn" | "error", msg: string, supportingDetails: any[]) {
 
+      
+        // These various ways of calling the console just help with formatting messages.
+        // If the supporting detail is a single item array, its easier to view and manage in Chrome (at least) 
+        // if it's emitted directly rather than wrapped in an array containing a single item.
         if (supportingDetails.length > 0) {
-            console[msgType].call(this, msg, supportingDetails);
+            if (supportingDetails.length === 1) {
+            console[msgType].call(this, msg, supportingDetails[0]);
         }
         else {
-            console[msgType].call(this, msg);
+            console[msgType].call(this, msg, supportingDetails);
+        }
+        }
+        else {
+            console[msgType].call(this,msg);
         }
 
     }
