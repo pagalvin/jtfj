@@ -1,7 +1,7 @@
 ﻿import { Functionals } from '../../Framework/Functionals';
 import { AbstractAngularService } from "../../Framework/AbstractAngularService";
 import { RecordIDsService } from "../../DataServices/RecordIDsService";
-import { IFactItem, FactItem } from "./FactItem";
+import { IFactItem, FactItem } from "./FactModel";
 import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 
 import { Injectable } from '@angular/core';
@@ -33,8 +33,7 @@ export class FactsService extends AbstractAngularService {
         this.loadAllFacts();
     }
 
-
-    public loadAllFacts() {
+    public async loadAllFacts() {
         return this._loadAllFactsPromise;
     }
 
@@ -133,12 +132,16 @@ export class FactsService extends AbstractAngularService {
 
                 theFact.UniqueID = newID;
                 this._allFacts = Functionals.getMergedCollection(this._allFacts, theFact);
-                this.persistFacts();
+                await this.persistFacts();
+
+                this.cLog.debug(`FactsService: SaveFact: New fact persisted, resolving promise to true.`);
+                
                 resolve(true);
             }
             else {
                 this._allFacts = Functionals.getMergedCollection(this._allFacts, theFact);
-                this.persistFacts();
+                await this.persistFacts();
+                this.cLog.debug(`FactsService: SaveFact: Existing fact persisted, resolving promise to true.`);
                 resolve(true);
             }
 
@@ -148,8 +151,11 @@ export class FactsService extends AbstractAngularService {
 
     private async persistFacts(): Promise<boolean> {
 
+        this.cLog.debug(`Facts.Service: persistFacts: Entering.`);
+
         return new Promise<boolean>((resolve, reject) => {
             try {
+                
                 localStorage.setItem(this._localStorageKey, JSON.stringify(this._allFacts));
                 resolve(true);
             }

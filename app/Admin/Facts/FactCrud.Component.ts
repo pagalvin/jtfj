@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import * as FactItemModule from './FactItem';
+import * as FactItemModule from './FactModel';
 import { FactsService } from './Facts.Service';
 import { KnowledgeDomainItem } from '../KnowledgeDomains/KDItem';
 import { KnowledgeDomainsService } from '../KnowledgeDomains/KD.Service';
@@ -19,11 +19,10 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
         factID: string;
     }
 
-@Component({
-    templateUrl: 'app/Admin/Facts/FactCrud.View.html',
-    selector: 'jtfj-fact-crud-component'
-})
-
+    @Component({
+        templateUrl: 'app/Admin/Facts/FactCrud.View.html',
+        selector: 'jtfj-fact-crud-component'
+    })
     export class FactCrudComponent implements OnInit, OnDestroy {
 
         private _allFact: KnowledgeDomainItem[];
@@ -67,9 +66,11 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
             try {
                 this.paramSubscription = this.activatedRoute.params.subscribe(async params => {
                         
-                    this.isNewFactItem = (params["factID"] && new String(params["factID"]).toLowerCase()) === "new" ? true : false;
-                    this.existingFactID = this.isNewFactItem ? params["factID"] : null;
+                    this.clog.debug(`FactCrudComponent: ngOnInit: got params:`, params)
 
+                    this.isNewFactItem = (params["factID"] && new String(params["factID"]).toLowerCase()) === "new" ? true : false;
+                    this.existingFactID = this.isNewFactItem ? null : params["factID"];
+                    
                     await this.kdService.getKnowledgeDomains();
 
                     if (this.isNewFactItem) {
@@ -81,16 +82,15 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
                 });
             }
             catch (initializationException) {
-                this.clog.error(`KDCrud.Component: Error: Failed to initialize due to exception:`, initializationException);
-                throw this.errorsService.GetNewError(`KDCrud.Component: Error: Failed to initialize due to exception.`, initializationException);
+                this.clog.error(`FactCrud.Component: Error: Failed to initialize due to exception:`, initializationException);
+                throw this.errorsService.GetNewError(`FactCrud.Component: Error: Failed to initialize due to exception.`, initializationException);
             }
 
         }
 
         public ngOnDestroy() {
-
+            this.paramSubscription.unsubscribe();
         }
-
 
         private async initializeExistingFact(forFactID: string) {
 
@@ -120,6 +120,30 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 
         public handleDeleteCorrectAnswer(theCorrectAnswer: FactItemModule.ICorrectAnswer) {
             theCorrectAnswer._isDeleted = true;
+        }
+
+        public isKDSelected(theDomainTitle: string) {
+
+            if (! this.InputKnowledgeDomains) {
+                 return false;
+            }
+            if (this.InputKnowledgeDomains && this.InputKnowledgeDomains.length < 1) {
+                return false;
+            }
+
+            return this.InputKnowledgeDomains.filter( (aKD) => { return aKD === theDomainTitle;}).length > 0;
+            
+        }
+
+        public toggleKD(kdTitleToToggle: string) {
+
+            if (this.isKDSelected(kdTitleToToggle)) {
+                this.InputKnowledgeDomains = this.InputKnowledgeDomains.filter((aKD) => {return aKD !== kdTitleToToggle});
+            }
+            else {
+                this.InputKnowledgeDomains = this.InputKnowledgeDomains.concat(kdTitleToToggle);
+            }
+
         }
 
         private handleAddNewQuestion() {
@@ -167,7 +191,9 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
             this.router.navigate(["/Admin/Facts"]);
         }
 
-        public handleSave() {
+        public async handleSave() {
+
+            this.clog.debug(`FactCrudComponent: handleSave: Entering.`);
 
             const factToSave: FactItemModule.FactItem = new FactItemModule.FactItem();
             const confirmationMsg: string = this.isNewFactItem ? "Saved a new fact!" : "Updated an existing fact!";
@@ -183,7 +209,9 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
                 factToSave.UniqueID = this.existingFactID;
             }
 
-            this.factsService.saveFact(factToSave);
+            await this.factsService.saveFact(factToSave);
+
+            this.returnToFactList();
 
             // const OKModal = this._modalService.CreateOKModal("Saved Fact", confirmationMsg).result.then(
             //     (result) => {

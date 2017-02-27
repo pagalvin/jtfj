@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
-import { FactItem } from "./FactItem";
+import { FactItem } from "./FactModel";
 import { FactsService } from "../Facts/Facts.Service";
 import { Functionals as F } from "../../Framework/Functionals";
 import { ConsoleLog } from "../../Framework/Logging/ConsoleLogService";
 import { KnowledgeDomainItem } from "../KnowledgeDomains/KDItem";
+import * as CustomErrors from "../../Framework/ErrorHandling/ErrorsService";
 
 @Component({
     selector: 'jtfj-facts-list',
@@ -23,13 +24,18 @@ export class FactsListComponent implements OnInit {
     } // constructor
 
     public ngOnInit() {
-
         this.factsService.loadAllFacts();
-
     }
 
-    public GetFriendlyKDDisplay(forDomains: KnowledgeDomainItem[]) {
-        return F.stringArrayToCdl(F.extractFieldsFromCollection<string[]>(forDomains, "Title"));
+    public getFriendlyKDDisplay(forDomains: KnowledgeDomainItem[]) {
+        try {
+            const result = F.stringArrayToCdl(F.extractFieldsFromCollection<string[]>(forDomains, "Title"));
+            this.clog.debug(`FactsListComponent: getFriendlyKDDisplay: got a view of knowledge domains:`, result);
+            return result;
+        }
+        catch (ex) {
+            return (<CustomErrors.IError>ex)._msg;
+        }
     }
 
 }

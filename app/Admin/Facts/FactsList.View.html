@@ -6,8 +6,6 @@
 <p>
     <a href="javascript:void(0);" ng-click="ping()">Ping the service.</a>
 </p>
-<h5>All Facts</h5>
-<pre>{{AllFacts | json}}</pre>
             <a [routerLink]="['/Admin/Fact', 'New']">New Fact</a>
 
 
@@ -43,7 +41,7 @@
     <div class="row jtfj_listDataRow" ng-class="{'jtfj_listOddTableRow' : $index % 2 == 0}" *ngFor="let aFact of AllFacts" >
 
         <div class="col-xs-2">
-            {{GetFriendlyKDDisplay(aFact.KnowledgeDomains)}}
+            {{getFriendlyKDDisplay(aFact.KnowledgeDomains)}}
         </div>
         <div class="col-xs-3">
             {{aFact.FactStatement}}
@@ -53,6 +51,7 @@
         </div>
         <div class="col-xs-1">
             <!--<a href="#/Admin/Fact/{{aFact.UniqueID}}"><span class="glyphicon glyphicon-edit"></span></a>-->
+            ID: {{aFact.UniqueID}}
             <a [routerLink]="['/Admin/Fact', aFact.UniqueID]"><span class="glyphicon glyphicon-edit"></span></a>
         </div>
 
@@ -68,3 +67,7 @@
 </p>
 <h5>All Knowledge Domains</h5>
 <pre>{{vm.AllKnowledgeDomains | json}}</pre>-->
+
+<h5>All Facts</h5>
+<pre>{{AllFacts | json}}</pre>
+
