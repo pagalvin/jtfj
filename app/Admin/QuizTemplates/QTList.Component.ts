@@ -6,9 +6,9 @@ import * as KDM from "../KnowledgeDomains/KDItem";
 
 @Component({
     selector: 'jtfj-quiz-templates',
-    templateUrl: `app/Admin/QuizTempolates/QTList.View.html`,
+    templateUrl: `app/Admin/QuizTemplates/QTList.View.html`,
 })
-export class QuizTemplatesController {
+export class QuizTemplatesListComponent {
 
     public get AllQuizTemplates() { return this._quizTemplatesService.AllQuizTemplates; }
 
