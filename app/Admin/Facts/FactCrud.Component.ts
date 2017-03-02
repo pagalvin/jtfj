@@ -15,10 +15,6 @@ import * as CommonInterfaces from '../../Interfaces/Interfaces';
 
 import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 
-    interface kdRouteParameters {
-        factID: string;
-    }
-
     @Component({
         templateUrl: 'app/Admin/Facts/FactCrud.View.html',
         selector: 'jtfj-fact-crud-component'
@@ -98,7 +94,7 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
                 const theFact = await this.factsService.getFactByUniqueID(forFactID);
                 this.InputFactStatement = theFact.FactStatement;
                 this.InputDescription = theFact.Description;
-                this.InputKnowledgeDomains = theFact.KnowledgeDomains;
+                this.InputKnowledgeDomains = theFact.KnowledgeDomains.map( (aKD) => { return aKD.Title;});;
                 this.AllQuestions = [].concat(theFact.Questions);
                 this.AllWrongAnswers = [].concat(theFact.WrongAnswers);
                 this.AllCorrectAnswers = [].concat(theFact.CorrectAnswers);
@@ -200,7 +196,8 @@ import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 
             factToSave.FactStatement = this.InputFactStatement;
             factToSave.Description = this.InputDescription;
-            factToSave.KnowledgeDomains = this.InputKnowledgeDomains;
+            // factToSave.KnowledgeDomains = this.InputKnowledgeDomains;
+            factToSave.KnowledgeDomains = await this.kdService.getKnowledgeDomainsByTitles(this.InputKnowledgeDomains);
             factToSave.Questions = this.AllQuestions.filter((anItem) => { return !anItem._isDeleted; });
             factToSave.WrongAnswers = this.AllWrongAnswers.filter((anItem) => { return !anItem._isDeleted; });
             factToSave.CorrectAnswers = [].concat(this.AllCorrectAnswers);
