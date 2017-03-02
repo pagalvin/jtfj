@@ -1,8 +1,9 @@
-﻿
+﻿<h1>Quiz Template Crud View</h1>
+
 <div class="row">
     <div class="col-xs-12">
-        <h3 ng-show="vm.IsNewItem">New QuizTemplate</h3>
-        <h3 ng-show="! vm.IsNewItem">Edit an Existing QuizTemplate</h3>
+        <h3 *ngIf="IsNewItem">New QuizTemplate</h3>
+        <h3 *ngIf="!IsNewItem">Edit an Existing QuizTemplate</h3>
     </div>
 </div>
 
@@ -11,21 +12,21 @@
     <!-- QuizTemplate Statement -->
     <div class="form-group">
         <label for="QuizTemplateTitle">QuizTemplate Statement</label>
-        <input type="text" class="form-control" id="QuizTemplateTitle" ng-model="vm.InputQuizTemplateTitle" />
+        <input type="text" class="form-control" id="QuizTemplateTitle" name="InputQuizTemplateTitle" [(ngModel)]="InputQuizTemplateTitle" />
         <small id="QuizTemplateTitleHelp" class="form-text text-muted">This anchors the questions, correct and incorrect answers..</small>
     </div>
 
     <!-- Description -->
     <div class="form-group">
         <label for="QuizTemplateDescription">Description</label>
-        <textarea class="form-control" id="QuizTemplateDescription" ng-model="vm.InputDescription"></textarea>
+        <textarea class="form-control" id="QuizTemplateDescription" name="InputDescription" [(ngModel)]="InputDescription"></textarea>
         <small id="QuizTemplateTitleHelp" class="form-text text-muted">Enter the description of this QuizTemplate. The description is shown to end users describing the quiz.</small>
     </div>
 
     <!-- Knowledge Domains -->
-    <div class="form-group">
+    <!--<div class="form-group">
         <label for="QuizTemplateKnowledgeDomains">Knowledge Domains</label>
-        <ui-select id="QuizTemplateKnowledgeDomains" multiple ng-model="vm.InputKnowledgeDomains" close-on-select="false" class="form-control" title="Choose a domain">
+        <ui-select id="QuizTemplateKnowledgeDomains" multiple ng-ngModel="vm.InputKnowledgeDomains" close-on-select="false" class="form-control" title="Choose a domain">
             <ui-select-match placeholder="Select knowledge domains...">{{$item.Title}}</ui-select-match>
             <ui-select-choices repeat="aKnowledgeDomain in vm.AllKnowledgeDomains | filter:$select.search">
                 <b>{{aKnowledgeDomain.Title}}</b>
@@ -34,7 +35,7 @@
                 <hr />
             </ui-select-choices>
         </ui-select>
-    </div>
+    </div>-->
 
     <!-- Facts -->
     <div class="form-group form-inline form-horizontal">
@@ -44,9 +45,17 @@
             </div>
             <div class="col-xs-12 ">
                 <label>Show:</label>
-                <input type="checkbox" id="jtfj_onlySelectedFacts" ng-click="vm.HandleFilterOnlySelectedFacts()" ng-model="vm.ActiveFilters.OnlySelectedFacts" /><label for="jtfj_onlySelectedFacts">Only selected facts</label>&nbsp;&nbsp;
-                <input type="checkbox" id="jtfj_onlyUnselectedFacts" ng-click="vm.HandleFilterOnlyUnselectedFacts()" ng-model="vm.ActiveFilters.OnlyUnselectedFacts" /><label for="jtfj_onlyUnselectedFacts">Only unselected facts</label>&nbsp;&nbsp;
-                <input type="checkbox" id="jtfj_allFacts" ng-click="vm.HandleFilterAllFacts()" ng-model="vm.ActiveFilters.AllFacts" /><label for="jtfj_allFacts">All facts</label>&nbsp;&nbsp;
+                <input type="checkbox" 
+                    name="onlySelectedFacts"
+                    id="jtfj_onlySelectedFacts" 
+                    (click)="handleFilterOnlySelectedFacts()" 
+                    [(ngModel)]="ActiveFilters.OnlySelectedFacts" />
+                    <label for="jtfj_onlySelectedFacts">
+                        Only selected facts
+                    </label>
+                    &nbsp;&nbsp;
+                <input type="checkbox" name="onlyUnselectedFacts" id="jtfj_onlyUnselectedFacts" (click)="handleFilterOnlyUnselectedFacts()" [(ngModel)]="ActiveFilters.OnlyUnselectedFacts" /><label for="jtfj_onlyUnselectedFacts">Only unselected facts</label>&nbsp;&nbsp;
+                <input type="checkbox" name="allFacts" id="jtfj_allFacts" (click)="handleFilterAllFacts()" [(ngModel)]="ActiveFilters.AllFacts" /><label for="jtfj_allFacts">All facts</label>&nbsp;&nbsp;
 
                 <label for="jtfj_searchForFacts">Search:</label><input type="text" class="form-control" />
             </div>
@@ -56,20 +65,20 @@
             <div class="col-xs-6">Description</div>
             <div class="col-xs-2">Included?</div>
         </div>
-        <div class="row" ng-repeat="aFact in vm.AllViewFacts">
+        <div class="row" *ngFor="let aFact of AllViewFacts">
             <div class="col-xs-4">{{aFact.FactStatement}}</div>
             <div class="col-xs-6">{{aFact.Description}}</div>
-            <div class="col-xs-2" ng-show="vm.IsFactSelected(aFact)">
-                <i class="glyphicon glyphicon-ok" ng-click="vm.HandleDeselectFact(aFact)"></i>
+            <div class="col-xs-2" *ngIf="isFactSelected(aFact)">
+                <i class="glyphicon glyphicon-ok" (click)="handleDeselectFact(aFact)"></i>
             </div>
-            <div class="col-xs-2" ng-show="! vm.IsFactSelected(aFact)">
-                <i class="glyphicon glyphicon-unchecked" ng-click="vm.HandleSelectFact(aFact)"></i>
+            <div class="col-xs-2" *ngIf="! isFactSelected(aFact)">
+                <i class="glyphicon glyphicon-unchecked" (click)="handleSelectFact(aFact)"></i>
             </div>
         </div>
 
         <div class="row">
             <div class="col-xs-12">
-                <pre>{{vm.AllViewFacts | json}}</pre>
+                <pre>{{AllViewFacts | json}}</pre>
             </div>
         </div>
 
@@ -79,9 +88,8 @@
 
 <div class="row">
     <div class="col-xs-12">
-        <button xng-disabled="! QuizTemplateForm.$dirty" type="button" class="btn btn-primary" ng-click="vm.HandleSave()">Save</button>
-        <button ng-show="! vm.IsNewItem" type="button" class="btn btn-warning" ng-click="vm.HandleDelete()">Delete</button>
-        <button type="button" class="btn btn-warning" ng-click="vm.HandleCancel(QuizTemplateForm.$dirty)">Cancel</button>
+        <button xng-disabled="! QuizTemplateForm.$dirty" type="button" class="btn btn-primary" (click)="handleSave()">Save</button>
+        <button ng-show="! IsNewItem" type="button" class="btn btn-warning" (click)="handleDelete()">Delete</button>
+        <button type="button" class="btn btn-warning" (click)="handleCancel(QuizTemplateForm.$dirty)">Cancel</button>
     </div>
 </div>
-

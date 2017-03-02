@@ -1,13 +1,13 @@
-﻿<h3>List Quiz Templates!</h3>
+﻿<h3>Quiz Templates</h3>
 
 
 <div class="row">
     <div class="col-xs-12">
         <h3>
-            Quiz Templates<span class="glyphicon glyphicon-plus" onclick="window.location.href='#/Admin/QuizTemplate/New'"></span>
+            Quiz Templates            
+            <a title="Add a mew Quizk Template" [routerLink]="['/Admin/QuizTemplate', 'New']"><span class="glyphicon glyphicon-plus"></span></a>
         </h3>
     </div>
-
 </div>
 
 <div class="container">
@@ -28,10 +28,10 @@
 
     </div>
 
-    <div class="row jtfj_listDataRow" ng-class="{'jtfj_listOddTableRow' : $index % 2 == 0}" ng-repeat="aQuizTemplate in vm.AllQuizTemplates track by $index">
+    <div class="row jtfj_listDataRow" [class]="{'jtfj_listOddTableRow' : $index % 2 == 0}" *ngFor="let aQuizTemplate of AllQuizTemplates">
 
         <div class="col-xs-2">
-            {{vm.GetFriendlyKDDisplay(aQuizTemplate.KnowledgeDomains)}}
+            {{GetFriendlyKDDisplay(aQuizTemplate.KnowledgeDomains)}}
         </div>
         <div class="col-xs-3">
             {{aQuizTemplate.Title}}
@@ -40,9 +40,11 @@
             {{aQuizTemplate.Description}}
         </div>
         <div class="col-xs-1">
-            <a href="#/Admin/QuizTemplate/{{aQuizTemplate.UniqueID}}"><span class="glyphicon glyphicon-edit"></span></a>
+            <a [routerLink]="['/Admin/QuizTemplate', aQuizTemplate.UniqueID]"><span class="glyphicon glyphicon-edit"></span></a>
         </div>
     </div>
+
+    
 
 </div>
 

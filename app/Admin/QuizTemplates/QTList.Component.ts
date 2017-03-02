@@ -10,14 +10,14 @@ import * as KDM from "../KnowledgeDomains/KDItem";
 })
 export class QuizTemplatesListComponent {
 
-    public get AllQuizTemplates() { return this._quizTemplatesService.AllQuizTemplates; }
+    public get AllQuizTemplates() { return this.quizTemplatesService.AllQuizTemplates; }
 
     constructor(private clog: ConsoleLog,
-        private _quizTemplatesService: QuizTemplatesService) {
+        private quizTemplatesService: QuizTemplatesService) {
 
         this.clog.debug(`QuizTemplatesController: ctor: Entering.`);
 
-        this._quizTemplatesService.LoadAll().then(
+        this.quizTemplatesService.LoadAll().then(
             (results) => {
                 this.clog.debug(`ListQuizTemplateController: Loaded quiz templates:`, this.AllQuizTemplates);
             },
@@ -28,16 +28,17 @@ export class QuizTemplatesListComponent {
     } // constructor
 
     public Ping(): void {
-        this._quizTemplatesService.ping();
+        this.quizTemplatesService.ping();
     }
 
     /**
      * Returns a comma delimited list of knowledge domains suitable for rendering on the UI.
      * @param forDomains: array of knowledge domain items.
      */
-    public GetFriendlyKDDisplay(forDomains: KDM.KnowledgeDomainItem[]) {
+    public GetFriendlyKDDisplay(forDomains: string[]) {
 
         return Functionals.stringArrayToCdl(Functionals.extractFieldsFromCollection<string[]>(forDomains, "Title"));
+        // return Functionals.stringArrayToCdl(forDomains);
     }
 }
 

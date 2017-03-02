@@ -17,7 +17,7 @@ import { KnowledgeDomainsService } from './Admin/KnowledgeDomains/KD.Service';
 
 import { QuizTemplatesListComponent } from './Admin/QuizTemplates/QTList.Component'
 import { QuizTemplatesService } from './Admin/QuizTemplates/QT.Service'
-
+import { QTCrudComponent } from './Admin/QuizTemplates/QTCrud.Component';
 import { FactCrudComponent } from './Admin/Facts/FactCrud.Component';
 import { FactsListComponent } from './Admin/Facts/FactsList.Component';
 import { FactsService } from './Admin/Facts/Facts.Service';
@@ -29,7 +29,8 @@ const appRoutes: Routes = [
   { path: 'Admin/KnowledgeDomains', component: KnowledgeDomainsListComponent},
   { path: 'Admin/Facts', component: FactsListComponent},
   { path: 'Admin/Fact/:factID', component: FactCrudComponent},
-  { path: 'Admin/QuizTemplates', component: QuizTemplatesListComponent}
+  { path: 'Admin/QuizTemplates', component: QuizTemplatesListComponent},
+  { path: 'Admin/QuizTemplate/:quizTemplateID', component: QTCrudComponent}
 ];
 
 @NgModule({
@@ -45,6 +46,7 @@ const appRoutes: Routes = [
     KnowledgeDomainsCrudComponent,
     GlobalFooterComponent,
     QuizTemplatesListComponent,
+    QTCrudComponent,
     AppComponent
   ],
   providers: [

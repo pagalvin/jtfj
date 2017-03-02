@@ -24,7 +24,7 @@ export class Functionals {
     }
 
     static entityIsInCollection(collection: Entities.AbstractItem[], testID: string) {
-        return collection.some((anItem) => { return anItem.UniqueID === testID; });
+        return collection ? collection.some((anItem) => { return anItem.UniqueID === testID; }): false;
     }
 
     static getFirstEntityByInternalID<T extends Entities.IAbstractItem>(forID: number, entityCollection: T[]): T {

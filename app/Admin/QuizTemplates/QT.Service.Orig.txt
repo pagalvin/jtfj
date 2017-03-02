@@ -1,0 +1,151 @@
+module jtfj.Admin.Services {
+
+    "use strict";
+
+    import F = jtfj.Framework.Functionals;
+
+    export class QuizTemplatesService extends jtfj.Framework.Services.AbstractAngularService {
+
+        private _localStorageKey: string = "AllQuizTemplates";
+
+        private _allQuizTemplates: jtfj.Entities.IQuizTemplateItem[];
+        public get AllQuizTemplates(): jtfj.Entities.IQuizTemplateItem[] { return this._allQuizTemplates; }
+
+        private _loadAllQuizTemplatesPromise: ng.IPromise<boolean>;
+
+        static $inject = [
+            "$http",
+            "$q",
+            "$log",
+            "jtfj.Services.RecordIDsService"
+        ];
+
+        constructor(
+            private $http: ng.IHttpService,
+            private $q: ng.IQService,
+            private $log: ng.ILogService,
+            private _recordsService: jtfj.Services.RecordIDsService) {
+
+            super();
+
+            this._loadAllQuizTemplatesPromise = this._loadAllQuizTemplates();
+
+        }
+
+        public Ping() {
+            this.$log.debug(`QuizTemplatesService: got a ping, pinging your right back.`);
+            this._loadAllQuizTemplates();
+        }
+
+
+        public LoadAllQuizTemplates() {
+            return this._loadAllQuizTemplatesPromise;
+        }
+
+        public DeleteQuizTemplateByUniqueID(forID: string): ng.IPromise<boolean> {
+
+            const deferred = this.$q.defer<boolean>();
+
+            this._allQuizTemplates = this._allQuizTemplates.filter((anItem) => {
+                return anItem.UniqueID !== forID;
+            });
+
+            this._persistQuizTemplates();
+
+            return deferred.promise;
+
+        }
+
+        public GetQuizTemplateByUniqueID(forID: string): ng.IPromise<jtfj.Entities.IQuizTemplateItem> {
+
+            const deferred = this.$q.defer<jtfj.Entities.IQuizTemplateItem>();
+
+            this.$log.debug(`QuizTemplatesService: GetQuizTemplateByID: loading a QuizTemplate, [${forID}].`);
+
+            this._loadAllQuizTemplatesPromise.then(
+                () => {
+                    this.$log.debug(`QuizTemplatesService: GetQuizTemplateByID: all QuizTemplates:`, this._allQuizTemplates);
+                    deferred.resolve(<jtfj.Entities.IQuizTemplateItem>jtfj.Framework.Functionals.getEntityByUniqueID(forID, this._allQuizTemplates));
+                },
+                (errorDetails) => {
+                    this.$log.debug(`GetQuizTemplateByID: Failed to load the QuizTemplates database, error details:`, errorDetails);
+                    deferred.reject({
+                        msg: "QuizTemplatesService: GetQuizTemplateByID: Failed to retrieve the QuizTemplate.", errorDetails: errorDetails
+                    });
+                }
+            );
+
+            return deferred.promise;
+
+        }
+
+        public SaveQuizTemplate(theQuizTemplate: jtfj.Entities.IQuizTemplateItem): ng.IPromise<boolean> {
+
+            this.$log.debug(`QuizTemplatesService: SaveQuizTemplate: Entering. before saving, all QuizTemplates and QuizTemplate to save:`, {
+                presave: this._allQuizTemplates, QuizTemplateToSave: theQuizTemplate
+            });
+
+            const deferred = this.$q.defer<boolean>();
+
+            if (!F.IsIDAssigned(theQuizTemplate)) {
+                this._recordsService.GetUniqueID().then(
+                    (newID) => {
+                        theQuizTemplate.UniqueID = newID;
+                        this._allQuizTemplates = F.mergeEntityIntoCollection(this._allQuizTemplates, theQuizTemplate);
+                        this._persistQuizTemplates();
+                        deferred.resolve(true);
+                    }
+                );
+            }
+            else {
+                this._allQuizTemplates = F.mergeEntityIntoCollection(this._allQuizTemplates, theQuizTemplate);
+                this._persistQuizTemplates();
+                deferred.resolve(true);
+            }
+
+            return deferred.promise;
+
+        }
+
+        private _persistQuizTemplates(): void {
+            localStorage.setItem(this._localStorageKey, JSON.stringify(this._allQuizTemplates));
+        }
+
+        private _loadAllQuizTemplates(): ng.IPromise<boolean> {
+
+            this.$log.debug(`QuizTemplatesService: Entering, retrieving all quiz templates from local storage.`);
+
+            const deferred = this.$q.defer<boolean>();
+
+            const rawData = localStorage.getItem(this._localStorageKey);
+
+            this.$log.debug(`QuizTemplatesService: Entering, raw data:`, rawData);
+
+            if (rawData) {
+                this._allQuizTemplates = JSON.parse(rawData);
+                this._allQuizTemplates = this._allQuizTemplates.map((aQuizTemplate) => {
+                    return Entities.QuizTemplateItem.MakeSafe(aQuizTemplate);
+                });
+            }
+            else {
+                this._allQuizTemplates = [];
+            }
+
+            deferred.resolve(true);
+
+            return deferred.promise;
+
+        }
+
+        public Create20RandomQuizTemplates() {
+
+
+
+        }
+
+    }
+
+    angular
+        .module('jtfj')
+        .service("jtfj.Admin.Services.QuizTemplatesService", QuizTemplatesService);
+}

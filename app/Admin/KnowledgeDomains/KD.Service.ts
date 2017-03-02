@@ -34,6 +34,25 @@ export class KnowledgeDomainsService extends AbstractAngularService {
         return this.loadAllKnowledgeDomains();
     }
 
+    public async getKnowledgeDomainsByTitles(titles: string[]): Promise<KnowledgeDomainItem[]> {
+
+        return new Promise<KnowledgeDomainItem[]>(async (resolve, reject) => {
+
+            await this.kdLoadPromise;
+
+            const result = titles.reduce((prev: KnowledgeDomainItem[], curr: string) => {
+
+                const foundKD = this._allKnowledgeDomains.filter((aKD) => { return aKD.Title === curr })[0];
+
+                prev = prev.concat(foundKD);
+
+                return prev;
+            }, []);
+
+            resolve(result);
+        });
+    }
+
     public async getKnowledgeDomainItemByID(theId: string): Promise<KnowledgeDomainItem>{
 
         return new Promise<KnowledgeDomainItem>( (resolve, reject) => {
