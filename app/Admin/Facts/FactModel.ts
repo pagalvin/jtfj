@@ -1,4 +1,5 @@
 ﻿import {AbstractItem, IAbstractItem} from "../../Framework/AbstractItem";
+import { KnowledgeDomainItem } from "../KnowledgeDomains/KDItem";
 
     export interface IWrongAnswer {
         WrongAnswer: string;
@@ -13,7 +14,7 @@
         _isDeleted: boolean; // Used by the UI as well.
     }
 
-    export interface IQuestion {
+    export interface IQuestion { 
         Question: string;
         _isEditing: boolean; // Used by the UI.
         _isDeleted: boolean; // Used by the UI as well.
@@ -24,7 +25,7 @@
         FactStatement: string;
         Description: string;
         Questions: IQuestion[];
-        KnowledgeDomains: string[];
+        KnowledgeDomains: KnowledgeDomainItem[];
         CorrectAnswers: ICorrectAnswer[];
         WrongAnswers: IWrongAnswer[];
     }
@@ -34,7 +35,7 @@
         public FactID: number;
         public FactStatement: string;
         public Description: string;
-        public KnowledgeDomains: string[];
+        public KnowledgeDomains: KnowledgeDomainItem[];
         public Questions: IQuestion[];
         public CorrectAnswers: ICorrectAnswer[];
         public WrongAnswers: IWrongAnswer[];
