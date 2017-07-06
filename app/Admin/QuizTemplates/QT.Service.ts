@@ -4,7 +4,7 @@ import * as QTM from "./QT.Model"; // "QTM" = "Quiz Template Module"
 import { ConsoleLog } from "../../Framework/Logging/ConsoleLogService";
 import { RecordIDsService } from "../../DataServices/RecordIDsService";
 import { Injectable } from "@angular/core";
-
+ 
 "use strict";
 
 @Injectable()
@@ -72,6 +72,8 @@ export class QuizTemplatesService extends AbstractAngularService {
 
     public saveQuizTemplate(theQuizTemplate: QTM.IQuizTemplateItem): Promise<boolean> {
 
+        this.clog.debug(`QT.Service: saveQuizTemplate: Entering, saving a QT:`, theQuizTemplate);
+
         return new Promise((resolve, reject) => {
             if (!Functionals.isIDAssigned(theQuizTemplate)) {
                 this.recordsService.getUniqueID().then(
@@ -100,20 +102,23 @@ export class QuizTemplatesService extends AbstractAngularService {
 
         this.clog.debug(`QuizTemplatesService: Entering, retrieving all quiz templates from local storage.`);
 
-        return new Promise( (resolve, reject) => {
-        const rawData = localStorage.getItem(this.localStorageKey);
+        return new Promise((resolve, reject) => {
+            const rawData = localStorage.getItem(this.localStorageKey);
 
-        this.clog.debug(`QuizTemplatesService: Entering, raw data:`, rawData);
+            this.clog.debug(`QuizTemplatesService: Entering, raw data:`, {d: rawData});
 
-        if (rawData) {
-            this.allQuizTemplates = JSON.parse(rawData);
-            this.allQuizTemplates = this.allQuizTemplates.map((aQuizTemplate) => {
-                return QTM.QuizTemplateItem.MakeSafe(aQuizTemplate);
-            });
-        }
-        else {
-            this.allQuizTemplates = [];
-        }
+            if (rawData) {
+                this.allQuizTemplates = JSON.parse(rawData);
+                this.allQuizTemplates = this.allQuizTemplates.map((aQuizTemplate) => {
+                    return QTM.QuizTemplateItem.initializeNulls(aQuizTemplate);
+                });
+                this.clog.debug(`QT.Service: loadAllQuizTemplates: Got a some quiz templates:`, this.allQuizTemplates);
+                resolve(true);
+            }
+            else {
+                this.allQuizTemplates = [];
+                resolve(true);
+            }
     });
     
     }

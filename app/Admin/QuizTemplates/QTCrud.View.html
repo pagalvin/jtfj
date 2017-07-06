@@ -90,6 +90,6 @@
     <div class="col-xs-12">
         <button xng-disabled="! QuizTemplateForm.$dirty" type="button" class="btn btn-primary" (click)="handleSave()">Save</button>
         <button ng-show="! IsNewItem" type="button" class="btn btn-warning" (click)="handleDelete()">Delete</button>
-        <button type="button" class="btn btn-warning" (click)="handleCancel(QuizTemplateForm.$dirty)">Cancel</button>
+        <button type="button" class="btn btn-warning" (click)="handleCancel(false)">Cancel</button>
     </div>
 </div>

@@ -38,7 +38,7 @@
 
     </div>
 
-    <div class="row jtfj_listDataRow" ng-class="{'jtfj_listOddTableRow' : $index % 2 == 0}" *ngFor="let aFact of AllFacts" >
+    <div class="row jtfj_listDataRow" [class]="{'jtfj_listOddTableRow' : $index % 2 == 0}" *ngFor="let aFact of AllFacts" >
 
         <div class="col-xs-2">
             {{getFriendlyKDDisplay(aFact.KnowledgeDomains)}}

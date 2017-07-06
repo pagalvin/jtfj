@@ -1,6 +1,6 @@
-
+ 
 import { LogInterface } from './LogInterface';
-import { Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class ConsoleLog implements LogInterface {

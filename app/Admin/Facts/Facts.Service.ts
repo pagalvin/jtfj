@@ -125,7 +125,7 @@ export class FactsService extends AbstractAngularService {
             presave: this._allFacts, factToSave: theFact
         });
 
-        return new Promise<boolean>(async (resolve, reject) => {
+        return new Promise<boolean>( async (resolve, reject) => {
             if (! Functionals.isIDAssigned(theFact)) {
 
                 const newID = await this.recordsService.getUniqueID();
@@ -134,8 +134,6 @@ export class FactsService extends AbstractAngularService {
                 this._allFacts = Functionals.getMergedCollection(this._allFacts, theFact);
                 await this.persistFacts();
 
-                this.cLog.debug(`FactsService: SaveFact: New fact persisted, resolving promise to true.`);
-                
                 resolve(true);
             }
             else {

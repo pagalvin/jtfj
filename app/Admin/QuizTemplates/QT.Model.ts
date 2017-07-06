@@ -28,7 +28,7 @@ import * as FactModel from "../Facts/FactModel";
             this.Facts = [];
         }
 
-        static MakeSafe(theItem: QuizTemplateItem): QuizTemplateItem {
+        static initializeNulls(theItem: QuizTemplateItem): QuizTemplateItem {
 
             const result = new QuizTemplateItem();
             result.Description = theItem.Description || "";

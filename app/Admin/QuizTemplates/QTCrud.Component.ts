@@ -83,21 +83,12 @@ import * as QTM from "./QT.Model";
                     const quizTemplatePromise = this.isNewQuizTemplateItem ? this.initializeNewQuizTemplate() : this._initializeExistingQuizTemplate();
 
                     await [kdPromise, factsPromise, quizTemplatePromise];
-
+                    
                     this.clog.debug(`QuizTemplatecontroller: _initializeQuizTemplate: Promises all resolved!`);
 
                     this.AllFacts = this.factsService.AllFacts;
                     this.clog.debug(`QTCrud.Component: _initializeQuizTemplate: all facts:`, this.AllFacts);
 
-                    this.AllUnselectedFacts = this.AllFacts.reduce((allUnselectedFacts, currentAllFact) => {
-
-                        if (F.entityIsInCollection(this.AllSelectedFacts, currentAllFact.UniqueID)) {
-                            return allUnselectedFacts;
-                        }
-
-                        return allUnselectedFacts.concat(currentAllFact);
-
-                    }, []);
                 });
             }
             catch (initializationException) {
@@ -120,6 +111,9 @@ import * as QTM from "./QT.Model";
         }
 
         public handleFilterOnlyUnselectedFacts() {
+
+            this.clog.debug(`QTCrudComponent: handleFilterOnlyUnselectedFacts: Entering.`);
+
             this.ActiveFilters.AllFacts = false;
             this.ActiveFilters.OnlySelectedFacts = false;
             this.ActiveFilters.OnlyUnselectedFacts = true;
@@ -185,6 +179,18 @@ import * as QTM from "./QT.Model";
                         this.AllSelectedFacts = [].concat(theQuizTemplate.Facts) || [];
                         this.AllViewFacts = [].concat(theQuizTemplate.Facts) || [];
 
+                        this.AllUnselectedFacts = this.AllFacts.reduce((allUnselectedFacts, currentAllFact) => {
+
+                            if (F.entityIsInCollection(this.AllSelectedFacts, currentAllFact.UniqueID)) {
+                                this.clog.debug(`QTCrud.Component: this fact is in the collection:`, currentAllFact)
+                                return allUnselectedFacts;
+                            }
+
+                            this.clog.debug(`QTCrud.Component: this fact is NOT in the collection, adding to allUnselectedFacts`, currentAllFact)
+                            return allUnselectedFacts.concat(currentAllFact);
+
+                        }, []);
+
                         this.clog.debug(`QTCrud.Component: _initializeExistingQuizTemplate: got a quiz template just fine, resolving with true, template details:`, theQuizTemplate);
                         resolve(true);
                     },
@@ -227,15 +233,16 @@ import * as QTM from "./QT.Model";
         }
 
         public isFactSelected(factToCheck: FM.IFactItem): boolean {
-            return this.AllSelectedFacts.some((aSelectedFact) => { return aSelectedFact.UniqueID === factToCheck.UniqueID; });
+
+            return this.AllSelectedFacts ? this.AllSelectedFacts.some((aSelectedFact) => { return aSelectedFact.UniqueID === factToCheck.UniqueID; }) : false;
         }
 
         public ping(): void {
             this.quizTemplatesService.ping();
         }
 
-        private _returnToQuizTemplateList() {
-            // this.$location.path("/Admin/QuizTemplates");
+        private returnToQuizTemplateList() {
+            this.router.navigate(["/Admin/QuizTemplates"]);
         }
 
         public handleSave() {
@@ -279,6 +286,8 @@ import * as QTM from "./QT.Model";
 
         public handleCancel(isFormDirty: boolean) {
 
+            this.returnToQuizTemplateList();
+
             // if (isFormDirty) {
             //     const confirmModal = this._modalService.CreateConfirmModal("Unsaved Changes", "Warning: You have unsaved changes. Are you sure you want to cancel?");
 
@@ -296,7 +305,7 @@ import * as QTM from "./QT.Model";
         }
 
         public handleSelectFact(theFact: FM.IFactItem) {
-            this.AllSelectedFacts = this.AllSelectedFacts.concat(theFact);
+            this.AllSelectedFacts = this.AllSelectedFacts ? this.AllSelectedFacts.concat(theFact): [theFact];
 
             this.AllUnselectedFacts = F.filterOutEntityByUniqueID(theFact.UniqueID, this.AllSelectedFacts);
         }
