@@ -1,8 +1,8 @@
-﻿import { AbstractAngularService } from "../../Framework/AbstractAngularService";
-import { Injectable } from "@angular/core";
+﻿import { Injectable } from "@angular/core";
 import { User } from "./UserEntity";
-import { ConsoleLog } from "../../Framework/Logging/ConsoleLogService";
-import { Util } from "../../Framework/Util/Util";
+import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
+import { Util } from '../../Framework/Util/Util';
+import { AbstractAngularService } from '../Data Structures/AbstractAngularService';
 
 "use strict";
 

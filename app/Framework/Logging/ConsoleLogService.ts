@@ -23,7 +23,6 @@ export class ConsoleLog implements LogInterface {
     }
 
     private emitLogMessage(msgType: "debug" | "info" | "warn" | "error", msg: string, supportingDetails: any[]) {
-
       
         // These various ways of calling the console just help with formatting messages.
         // If the supporting detail is a single item array, its easier to view and manage in Chrome (at least) 

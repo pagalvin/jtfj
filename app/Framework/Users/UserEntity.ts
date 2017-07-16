@@ -1,4 +1,5 @@
-﻿import {AbstractItem} from "../AbstractItem";
+﻿import { AbstractItem } from '../Data Structures/AbstractItem';
+
 
     export interface IUser {
         UserID: string;

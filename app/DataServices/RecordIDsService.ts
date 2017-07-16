@@ -1,9 +1,10 @@
-﻿import { Injectable } from '@angular/core';
-import { AbstractAngularService } from "../Framework/AbstractAngularService";
-import { UserService } from "../Framework/Users/UserService";
+﻿"use strict";
+import { AbstractAngularService } from '../Framework/Data Structures/AbstractAngularService';
 import { ConsoleLog } from '../Framework/Logging/ConsoleLogService';
+import { UserService } from '../Framework/Users/UserService';
 
-"use strict";
+import { Injectable } from '@angular/core';
+
 
 @Injectable()
 export class RecordIDsService extends AbstractAngularService {

@@ -1,12 +1,12 @@
 ﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Functionals as F } from "../../Framework/Functionals";
-import * as FM from "../../Admin/Facts/FactModel";
-import * as QTM from "../../admin/QuizTemplates/QT.Model";
-import * as QIM from "./QIModel";
-import { ConsoleLog } from "../../Framework/Logging/ConsoleLogService";
-import { QuizTemplatesService } from "../../Admin/QuizTemplates/QT.Service";
-import { FactsService } from "../../admin/Facts/Facts.Service";
+import * as FM from '../../Admin/Facts/FactModel';
+import { FactsService } from '../../Admin/Facts/Facts.Service';
+import * as QTM from '../../admin/QuizTemplates/QT.Model';
+import { QuizTemplatesService } from '../../Admin/QuizTemplates/QT.Service';
+import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
+import * as QIM from './QIModel';
 
 interface qiParameters {
     totalQuestions: number;

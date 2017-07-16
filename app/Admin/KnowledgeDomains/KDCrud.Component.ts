@@ -5,16 +5,16 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { KnowledgeDomainItem } from './KDItem';
+import { AbstractCrudComponent } from '../../Framework/Data Structures/AbstractCrudComponent';
 import { KnowledgeDomainsService } from './KD.Service';
-
+import { KnowledgeDomainItem } from './KDItem';
 import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
 
 @Component({
     templateUrl: 'app/Admin/KnowledgeDomains/KDCrud.View.html',
     selector: 'jtfj-kd-crud'
 })
-export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
+export class KnowledgeDomainsCrudComponent extends AbstractCrudComponent implements OnInit, OnDestroy {
 
     private allKnowledgeDomains: KnowledgeDomainItem[];
     public get AllKnowledgeDomain(): KnowledgeDomainItem[] {
@@ -27,13 +27,17 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
     private isNewKnowledgeDomainItem: boolean = false;
     public get IsNewItem(): boolean { return this.isNewKnowledgeDomainItem; }
 
+    public InputModel: KnowledgeDomainItem;
+
     public InputTitle: string;
     public InputDescription: string;
 
     constructor(private activatedRoute: ActivatedRoute,
         private router: Router,
-        private knowledgeDomainService: KnowledgeDomainsService,
+        private kdService: KnowledgeDomainsService,
         private clog: ConsoleLog) {
+
+        super();
 
         clog.debug(`KnowledgeDomainsCrudComponent: ctor: Entering.`);
 
@@ -57,9 +61,7 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
 
                     this.clog.debug(`KnowledgeDomainsCrudComponent: will need to load up an existing item to edit it.`);
 
-
-
-                    this.knowledgeDomainService.getKnowledgeDomainItemByID(this.providedKnowledgeDomainID).then(
+                    this.kdService.getKnowledgeDomainItemByID(this.providedKnowledgeDomainID).then(
                         (existingKnowledgeDomain) => {
                             this.clog.debug(`KDCrud.Component: ngOnInit: Got an existing knowledge domain:`, existingKnowledgeDomain);
                             this.InputDescription = existingKnowledgeDomain.Description;
@@ -110,8 +112,8 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
             this.clog.debug(`KnowledgeDomainsCrudComponent: will need to load up an existing item to edit it.`);
 
             try {
-                const existingKnowledgeDomain = 
-                    await this.knowledgeDomainService.getKnowledgeDomainItemByID(this.providedKnowledgeDomainID);
+                const existingKnowledgeDomain =
+                    await this.kdService.getKnowledgeDomainItemByID(this.providedKnowledgeDomainID);
                 this.clog.debug(`KDCrud.Component: ngOnInit: Got an existing knowledge domain:`, existingKnowledgeDomain);
                 this.InputDescription = existingKnowledgeDomain.Description;
                 this.InputTitle = existingKnowledgeDomain.Title;
@@ -131,21 +133,19 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
     }
 
     public Ping(): void {
-        this.knowledgeDomainService.ping();
+        this.kdService.ping();
     }
 
     private returnToKnowledgeDomainsList() {
         this.clog.debug("KDCrud.Component: returnToKnowledgeDomainsList: Entering.");
-        //this.router.navigateByUrl("/Admin/KnowledgeDomains");
         this.router.navigate(["/Admin/KnowledgeDomains"]);
-
-        //this.$location.path("/Admin/KnowledgeDomains");
     }
 
-    public async handleSave() {
+    private saveLogic = async () => {
 
         const knowledgeDomainToSave = new KnowledgeDomainItem();
-        const confirmationMsg: string = this.isNewKnowledgeDomainItem ? "Saved a new Knowledge Domain!" : "Updated an existing Knowledge Domain!";
+        const confirmationMsg: string =
+            this.isNewKnowledgeDomainItem ? "Saved a new Knowledge Domain!" : "Updated an existing Knowledge Domain!";
 
         knowledgeDomainToSave.Title = this.InputTitle;
         knowledgeDomainToSave.Description = this.InputDescription;
@@ -154,19 +154,28 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
             knowledgeDomainToSave.UniqueID = this.providedKnowledgeDomainID;
         }
 
-        this.clog.debug(`KDCrud.Component: handleSave: Saving a knowledge domain (v2):`, [].concat(knowledgeDomainToSave)[0]);
-        await this.knowledgeDomainService.saveKnowledgeDomain(knowledgeDomainToSave);
+        this.clog.debug(`KDCrud.Component: saveLogic: Saving a knowledge domain (v2):`, [].concat(knowledgeDomainToSave)[0]);
 
-        this.clog.debug(`KDCrud.Component: handleSave: Finished saving the knowledge domain.`);
+        await this.kdService.saveKnowledgeDomain(knowledgeDomainToSave);
 
-        this.clog.debug(`KDCrud.Component: handleSave: changing route.`);
+        this.clog.debug(`KDCrud.Component: saveLogio: Finished saving the knowledge domain.`);
 
-        this.returnToKnowledgeDomainsList();
-        // const OKModal = this._modalService.CreateOKModal("Saved Knowledge Domain", confirmationMsg).result.then(
-        //     (result) => {
-        //         this._returnToKnowledgeDomainsList();
-        //     }
-        // );
+    }
+
+    public async handleSave() {
+
+        this.clog.debug(`KDCrud.Component: handleSave: Entering.`);
+
+        this.saveItem(this.saveLogic)
+            .then((result) => {
+
+                this.clog.debug(`KDCrud.Component: handleSave: changing route.`);
+
+                this.returnToKnowledgeDomainsList()
+            })
+            .catch( (errorDetails) => {
+                this.clog.error(`KDCrud.Component: handleSave: error saving, details:`, errorDetails);
+            });;
 
     }
 
@@ -174,10 +183,10 @@ export class KnowledgeDomainsCrudComponent implements OnInit, OnDestroy {
 
         this.clog.debug(`KDCrud.Component: handleDelete: Entering.`);
 
-        await this.knowledgeDomainService.deleteKnowledgeDomainByID(this.providedKnowledgeDomainID);
+        await this.kdService.deleteKnowledgeDomainByID(this.providedKnowledgeDomainID);
 
         this.returnToKnowledgeDomainsList();
-        
+
         // const confirmModal = this._modalService.CreateConfirmModal("Confirm Delete", "Are you sure you want to delete this item?");
 
         // confirmModal.result.then(

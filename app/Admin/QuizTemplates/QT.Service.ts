@@ -1,9 +1,10 @@
-﻿import { Functionals } from "../../Framework/Functionals";
-import { AbstractAngularService } from "../../Framework/AbstractAngularService";
-import * as QTM from "./QT.Model"; // "QTM" = "Quiz Template Module"
-import { ConsoleLog } from "../../Framework/Logging/ConsoleLogService";
-import { RecordIDsService } from "../../DataServices/RecordIDsService";
-import { Injectable } from "@angular/core";
+﻿import { Injectable } from '@angular/core';
+
+import { RecordIDsService } from '../../DataServices/RecordIDsService';
+import { AbstractAngularService } from '../../Framework/Data Structures/AbstractAngularService';
+import { Functionals } from '../../Framework/Functionals';
+import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
+import { IQuizTemplateItem, QuizTemplateItem } from './QT.Model';
  
 "use strict";
 
@@ -12,8 +13,8 @@ export class QuizTemplatesService extends AbstractAngularService {
 
     private localStorageKey: string = "AllQuizTemplates";
 
-    private allQuizTemplates: QTM.IQuizTemplateItem[];
-    public get AllQuizTemplates(): QTM.IQuizTemplateItem[] { return this.allQuizTemplates; }
+    private allQuizTemplates: IQuizTemplateItem[];
+    public get AllQuizTemplates(): IQuizTemplateItem[] { return this.allQuizTemplates; }
 
     private loadAllQuizTemplatesPromise: Promise<boolean>;
 
@@ -51,7 +52,7 @@ export class QuizTemplatesService extends AbstractAngularService {
 
     }
 
-    public getQuizTemplateByUniqueID(forID: string): Promise<QTM.IQuizTemplateItem> {
+    public getQuizTemplateByUniqueID(forID: string): Promise<IQuizTemplateItem> {
 
         this.clog.debug(`QuizTemplatesService: GetQuizTemplateByID: loading a QuizTemplate, [${forID}].`);
 
@@ -59,7 +60,7 @@ export class QuizTemplatesService extends AbstractAngularService {
             this.loadAllQuizTemplatesPromise.then(
                 () => {
                     this.clog.debug(`QuizTemplatesService: GetQuizTemplateByID: all QuizTemplates:`, this.allQuizTemplates);
-                    resolve(<QTM.IQuizTemplateItem>Functionals.getEntityByUniqueID(forID, this.allQuizTemplates));
+                    resolve(<IQuizTemplateItem>Functionals.getEntityByUniqueID(forID, this.allQuizTemplates));
                 },
                 (errorDetails) => {
                     this.clog.debug(`GetQuizTemplateByID: Failed to load the QuizTemplates database, error details:`, errorDetails);
@@ -70,7 +71,7 @@ export class QuizTemplatesService extends AbstractAngularService {
 
     }
 
-    public saveQuizTemplate(theQuizTemplate: QTM.IQuizTemplateItem): Promise<boolean> {
+    public saveQuizTemplate(theQuizTemplate: IQuizTemplateItem): Promise<boolean> {
 
         this.clog.debug(`QT.Service: saveQuizTemplate: Entering, saving a QT:`, theQuizTemplate);
 
@@ -110,7 +111,7 @@ export class QuizTemplatesService extends AbstractAngularService {
             if (rawData) {
                 this.allQuizTemplates = JSON.parse(rawData);
                 this.allQuizTemplates = this.allQuizTemplates.map((aQuizTemplate) => {
-                    return QTM.QuizTemplateItem.initializeNulls(aQuizTemplate);
+                    return QuizTemplateItem.initializeNulls(aQuizTemplate);
                 });
                 this.clog.debug(`QT.Service: loadAllQuizTemplates: Got a some quiz templates:`, this.allQuizTemplates);
                 resolve(true);

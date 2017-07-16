@@ -1,5 +1,5 @@
-﻿import {AbstractItem, IAbstractItem} from "../../Framework/AbstractItem";
-import { KnowledgeDomainItem } from "../KnowledgeDomains/KDItem";
+﻿import { AbstractItem, IAbstractItem } from '../../Framework/Data Structures/AbstractItem';
+import { KnowledgeDomainItem } from '../KnowledgeDomains/KDItem';
 
     export interface IWrongAnswer {
         WrongAnswer: string;

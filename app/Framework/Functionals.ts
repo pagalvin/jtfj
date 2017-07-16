@@ -1,4 +1,4 @@
-import * as Entities from "./AbstractItem";
+import * as Entities from "./Data Structures/AbstractItem";
 import * as CustomErrors from "./ErrorHandling/ErrorsService";
 
 export class Functionals {

@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
-import {AbstractAngularService} from '../AbstractAngularService';
-import {ConsoleLog} from '../Logging/ConsoleLogService';
+import { AbstractAngularService } from '../Data Structures/AbstractAngularService';
+import { ConsoleLog } from '../Logging/ConsoleLogService';
 
 "use strict";
 

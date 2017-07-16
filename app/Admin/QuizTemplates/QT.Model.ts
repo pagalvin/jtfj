@@ -1,14 +1,12 @@
-﻿import {AbstractItem} from "../../Framework/AbstractItem";
-import {IAbstractItem} from "../../Framework/AbstractItem";
-import {KnowledgeDomainItem} from "../KnowledgeDomains/KDItem";
-
-import * as FactModel from "../Facts/FactModel";
+﻿import { AbstractItem, IAbstractItem } from '../../Framework/Data Structures/AbstractItem';
+import { IFactItem } from '../Facts/FactModel';
+import { KnowledgeDomainItem } from '../KnowledgeDomains/KDItem';
 
     export interface IQuizTemplateItem extends IAbstractItem{
         Title: string;
         Description: string;
         KnowledgeDomains: KnowledgeDomainItem[];
-        Facts: FactModel.IFactItem[];
+        Facts: IFactItem[];
     }
 
     export class QuizTemplateItem extends AbstractItem implements IQuizTemplateItem{
@@ -16,7 +14,7 @@ import * as FactModel from "../Facts/FactModel";
         public Title: string;
         public Description: string;
         public KnowledgeDomains: KnowledgeDomainItem[];
-        public Facts: FactModel.IFactItem[];
+        public Facts: IFactItem[];
 
         constructor() {
             super();

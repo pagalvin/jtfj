@@ -1,9 +1,8 @@
 ﻿import { Functionals } from '../../Framework/Functionals';
-import { AbstractAngularService } from "../../Framework/AbstractAngularService";
 import { RecordIDsService } from "../../DataServices/RecordIDsService";
 import { IFactItem, FactItem } from "./FactModel";
 import { ConsoleLog } from '../../Framework/Logging/ConsoleLogService';
-
+import { AbstractAngularService } from '../../Framework/Data Structures/AbstractAngularService'
 import { Injectable } from '@angular/core';
 
 "use strict";
